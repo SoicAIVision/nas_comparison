@@ -35,21 +35,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenHardwareGuid
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3 shadow-lg">
+    <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3.5 shadow-lg">
       <div className="max-w-[98%] 2xl:max-w-[1850px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Logo & Title */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3.5">
           <div className="p-2.5 bg-gradient-to-br from-sky-500 to-blue-700 rounded-xl shadow-md shadow-sky-500/20 text-white flex items-center justify-center flex-shrink-0">
             <HardDrive className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center space-x-2.5">
-              <h1 className="text-lg font-bold text-white tracking-tight">NAS 視覺化與即時比價系統</h1>
-              <span className="px-2 py-0.5 text-xs font-semibold bg-sky-500/20 text-sky-400 rounded-full border border-sky-500/30">
+            <div className="flex items-center space-x-3">
+              <h1 className="text-xl font-bold text-white tracking-tight">NAS 視覺化與即時比價系統</h1>
+              <span className="px-2.5 py-0.5 text-xs font-semibold bg-sky-500/20 text-sky-400 rounded-full border border-sky-500/30">
                 Synology DS1825+ 專題
               </span>
             </div>
-            <p className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+            <p className="text-sm text-slate-400 flex items-center gap-2 mt-0.5">
               <span>目標容量 ≥ 50TB</span>
               <span>•</span>
               <span>預設 RAID 5</span>
@@ -58,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenHardwareGuid
                 onClick={onOpenHardwareGuide}
                 className="text-sky-400 hover:text-sky-300 font-medium inline-flex items-center gap-1 hover:underline"
               >
-                <BookOpen className="w-3.5 h-3.5" />
+                <BookOpen className="w-4 h-4" />
                 硬體配件與選購指南
               </button>
             </p>
@@ -66,15 +66,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenHardwareGuid
         </div>
 
         {/* Timestamps & Actions */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Timestamp Indicator with Tooltip */}
           <div
             className="relative"
             onMouseEnter={() => setShowTimestampTooltip(true)}
             onMouseLeave={() => setShowTimestampTooltip(false)}
           >
-            <div className="px-3 py-1.5 bg-slate-800/90 border border-slate-700/80 rounded-lg text-xs text-slate-300 flex items-center gap-2 cursor-help transition hover:border-slate-600">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div className="px-3.5 py-2 bg-slate-800/90 border border-slate-700/80 rounded-xl text-xs text-slate-300 flex items-center gap-2 cursor-help transition hover:border-slate-600">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>
                 報價時間：<strong className="text-slate-100 font-semibold">{timestamps.globalFormatted}</strong>
               </span>
@@ -82,20 +82,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenHardwareGuid
 
             {/* Hover Tooltip */}
             {showTimestampTooltip && (
-              <div className="absolute right-0 top-full mt-2 w-72 p-3 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-50 text-xs text-slate-300 space-y-1.5 animate-in fade-in zoom-in-95">
-                <div className="font-semibold text-slate-100 border-b border-slate-700 pb-1 flex items-center justify-between">
+              <div className="absolute right-0 top-full mt-2 w-80 p-3.5 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-50 text-xs text-slate-300 space-y-2 animate-in fade-in zoom-in-95">
+                <div className="font-semibold text-sm text-slate-100 border-b border-slate-700 pb-1.5 flex items-center justify-between">
                   <span>📊 數據來源時間詳情</span>
-                  <span className="text-[10px] text-sky-400">重整可刷新</span>
+                  <span className="text-xs text-sky-400">重整可刷新</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-xs">
                   <span className="text-slate-400">原價屋報價：</span>
                   <span className="text-slate-200 font-mono">{timestamps.coolpcFormatted}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-xs">
                   <span className="text-slate-400">欣亞數位報價：</span>
                   <span className="text-slate-200 font-mono">{timestamps.sinyaFormatted}</span>
                 </div>
-                <p className="text-[11px] text-slate-400 pt-1 leading-relaxed">
+                <p className="text-xs text-slate-400 pt-1 leading-relaxed">
                   點擊右側「重新整理報價」按鈕可發送即時請求同步兩大電商最新報價。
                 </p>
               </div>
@@ -106,57 +106,57 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenHardwareGuid
           <button
             onClick={() => refreshPrices()}
             disabled={isRefreshing}
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-medium flex items-center gap-1.5 transition disabled:opacity-50"
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-medium flex items-center gap-1.5 transition disabled:opacity-50"
             title="重新抓取原價屋與欣亞最新價格"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-sky-400' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-sky-400' : ''}`} />
             <span>{isRefreshing ? '更新中...' : '重新整理報價'}</span>
           </button>
 
           {/* Share Button (URL Hash) */}
           <button
             onClick={handleShare}
-            className="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-md shadow-sky-600/20 transition"
+            className="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-sky-600/20 transition"
             title="複製當前配置與比價結果分享連結（URL Hash 零後端完整保存）"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Share2 className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-4 h-4 text-emerald-300" /> : <Share2 className="w-4 h-4" />}
             <span>{copied ? '已複製分享連結！' : '複製分享連結'}</span>
           </button>
 
           {/* Guide Modal Button */}
           <button
             onClick={onOpenHardwareGuide}
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-medium flex items-center gap-1.5 transition"
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-medium flex items-center gap-1.5 transition"
             title="查看主機、硬碟、RAM 與配件選購指南"
           >
-            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+            <BookOpen className="w-4 h-4 text-amber-400" />
             <span>選購指南</span>
           </button>
 
           {/* Export CSV / Report */}
           <button
             onClick={onOpenExport}
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-medium flex items-center gap-1.5 transition"
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-medium flex items-center gap-1.5 transition"
             title="匯出採購評估報表或 CSV"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
+            <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
             <span>匯出報表</span>
           </button>
 
           {/* Add Plan Button */}
           <button
             onClick={() => addPlan()}
-            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition"
+            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
             title="新增一組比較方案"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-4 h-4" />
             <span>新增方案</span>
           </button>
 
           {/* Reset to Default */}
           <button
             onClick={resetToDefaults}
-            className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition"
+            className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-xl transition"
             title="重設為預設方案"
           >
             <RotateCcw className="w-4 h-4" />
@@ -167,7 +167,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenHardwareGuid
       {/* Refresh Status Toast Banner */}
       {refreshStatus.type !== 'idle' && (
         <div
-          className={`mt-2 py-1 px-4 text-center text-xs rounded-md transition ${
+          className={`mt-2 py-1.5 px-4 text-center text-xs rounded-md transition ${
             refreshStatus.type === 'loading'
               ? 'bg-sky-950/60 text-sky-300 border border-sky-800/50'
               : refreshStatus.type === 'success'
