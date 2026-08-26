@@ -70,12 +70,17 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
     const defaultNas = NAS_MODELS[0];
     const defaultHdd = HARD_DRIVES[1]; // 18TB IronWolf Pro
 
+    const hddId = customPlan?.hddModelId || defaultHdd.id;
+    const hddCnt = customPlan?.hddCount ?? 4;
+
     const newPlan: PlanConfiguration = {
       id: newId,
       name: customPlan?.name || `方案 ${String.fromCharCode(65 + existingPlans.length)} (DS1825+ 4x18TB)`,
       nasModelId: customPlan?.nasModelId || defaultNas.id,
-      hddModelId: customPlan?.hddModelId || defaultHdd.id,
-      hddCount: customPlan?.hddCount ?? 4,
+      isMixedDrives: true,
+      mixedDrives: customPlan?.mixedDrives || [{ hddModelId: hddId, count: hddCnt }],
+      hddModelId: hddId,
+      hddCount: hddCnt,
       raidType: customPlan?.raidType || 'RAID5',
       selectedRamId: customPlan?.selectedRamId,
       selectedAddonIds: customPlan?.selectedAddonIds || [],

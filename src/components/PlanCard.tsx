@@ -16,8 +16,6 @@ import {
   CheckCircle2,
   Tag,
   HelpCircle,
-  Shuffle,
-  Layers,
   Plus,
   Minus,
   Sparkles,
@@ -38,8 +36,6 @@ export const PlanCard: React.FC<PlanCardProps> = ({
   const {
     config,
     nasModel,
-    hddModel,
-    isMixedDrives,
     mixedDriveItems,
     storage,
     cost,
@@ -59,44 +55,16 @@ export const PlanCard: React.FC<PlanCardProps> = ({
     updatePlan(config.id, { nasModelId: newNasId, hddCount: newHddCount });
   };
 
-  // Toggle between Single Drive mode and Mixed Drive mode
-  const handleToggleMixedMode = (enableMixed: boolean) => {
-    if (enableMixed) {
-      // Initialize mixed drives array from current single drive
-      const initialMixed = [
-        { hddModelId: config.hddModelId, count: Math.max(2, Math.floor(config.hddCount / 2)) },
-        {
-          hddModelId:
-            HARD_DRIVES.find((h) => h.id !== config.hddModelId)?.id || HARD_DRIVES[1].id,
-          count: Math.max(1, config.hddCount - Math.max(2, Math.floor(config.hddCount / 2))),
-        },
-      ];
-      updatePlan(config.id, { isMixedDrives: true, mixedDrives: initialMixed });
-    } else {
-      // Revert back to single drive mode
-      const primaryId = config.mixedDrives?.[0]?.hddModelId || config.hddModelId;
-      updatePlan(config.id, { isMixedDrives: false, hddModelId: primaryId, hddCount: usedBays });
-    }
-  };
-
-  const handleSingleHddChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updatePlan(config.id, { hddModelId: e.target.value });
-  };
-
-  const handleSingleDiskCountChange = (count: number) => {
-    updatePlan(config.id, { hddCount: count });
-  };
-
   // Mixed Drives Handlers
-  const handleUpdateMixedDriveModel = (index: number, newModelId: string) => {
+  const handleUpdateDriveModel = (index: number, newModelId: string) => {
     const current = config.mixedDrives ? [...config.mixedDrives] : [];
     if (current[index]) {
       current[index] = { ...current[index], hddModelId: newModelId };
-      updatePlan(config.id, { mixedDrives: current });
+      updatePlan(config.id, { mixedDrives: current, hddModelId: current[0].hddModelId });
     }
   };
 
-  const handleUpdateMixedDriveCount = (index: number, delta: number) => {
+  const handleUpdateDriveCount = (index: number, delta: number) => {
     const current = config.mixedDrives ? [...config.mixedDrives] : [];
     if (current[index]) {
       const newCount = current[index].count + delta;
@@ -106,25 +74,32 @@ export const PlanCard: React.FC<PlanCardProps> = ({
       if (otherBays + newCount > nasModel.bays) return;
 
       current[index] = { ...current[index], count: newCount };
-      updatePlan(config.id, { mixedDrives: current });
+      const totalCount = current.reduce((s, i) => s + i.count, 0);
+      updatePlan(config.id, { mixedDrives: current, hddCount: totalCount });
     }
   };
 
-  const handleAddMixedDriveRow = () => {
+  const handleAddDriveRow = () => {
     const current = config.mixedDrives ? [...config.mixedDrives] : [];
     if (usedBays >= nasModel.bays) return;
     // Find an unused HDD model or default
     const availableHdd =
       HARD_DRIVES.find((h) => !current.some((c) => c.hddModelId === h.id)) || HARD_DRIVES[0];
     current.push({ hddModelId: availableHdd.id, count: 1 });
-    updatePlan(config.id, { mixedDrives: current });
+    const totalCount = current.reduce((s, i) => s + i.count, 0);
+    updatePlan(config.id, { mixedDrives: current, hddCount: totalCount });
   };
 
-  const handleRemoveMixedDriveRow = (index: number) => {
+  const handleRemoveDriveRow = (index: number) => {
     const current = config.mixedDrives ? [...config.mixedDrives] : [];
     if (current.length <= 1) return;
     current.splice(index, 1);
-    updatePlan(config.id, { mixedDrives: current });
+    const totalCount = current.reduce((s, i) => s + i.count, 0);
+    updatePlan(config.id, {
+      mixedDrives: current,
+      hddModelId: current[0]?.hddModelId || config.hddModelId,
+      hddCount: totalCount,
+    });
   };
 
   const handleRaidChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -162,9 +137,9 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                 {nasModel.name}
               </span>
               <span className="text-sm text-slate-400 truncate">
-                {isMixedDrives
-                  ? `混搭 ${usedBays} 顆硬碟 (${config.raidType})`
-                  : `${config.hddCount} 顆 × ${hddModel.capacityTb}TB (${config.raidType})`}
+                {mixedDriveItems.length === 1
+                  ? `${usedBays} 顆 × ${mixedDriveItems[0]?.hddModel.capacityTb}TB (${config.raidType})`
+                  : `混搭 ${usedBays} 顆硬碟 (${config.raidType})`}
               </span>
             </div>
           </div>
@@ -269,12 +244,12 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             </select>
           </div>
 
-          {/* 2. Hard Drive Mode Header (Single vs Mixed Mode Toggle) */}
+          {/* 2. Unified Hard Drive Configuration Section */}
           <div>
             <div className="flex items-center justify-between text-sm font-semibold text-slate-300 mb-1.5">
               <span className="flex items-center gap-1.5">
                 <HddIcon className="w-4 h-4 text-sky-400" />
-                硬碟配置模式
+                硬碟選購與槽位配置
                 <button
                   type="button"
                   onClick={() => onOpenHardwareGuide('hdd')}
@@ -285,39 +260,19 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                 </button>
               </span>
 
-              {/* Mode Toggle Button */}
-              <button
-                type="button"
-                onClick={() => handleToggleMixedMode(!isMixedDrives)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer ${
-                  isMixedDrives
-                    ? 'bg-purple-600 text-white shadow-md shadow-purple-600/20'
-                    : 'bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700'
-                }`}
-                title="切換單一型號配置或多品牌/容量混搭模式"
-              >
-                {isMixedDrives ? (
-                  <>
-                    <Shuffle className="w-3.5 h-3.5" />
-                    混搭模式中
-                  </>
-                ) : (
-                  <>
-                    <Layers className="w-3.5 h-3.5" />
-                    切換混搭不同型號
-                  </>
-                )}
-              </button>
+              <span className="font-mono text-xs text-sky-400 font-medium">
+                已選 {usedBays} / {nasModel.bays} 槽 ({freeBays > 0 ? `剩 ${freeBays} 空槽` : '滿槽'})
+              </span>
             </div>
 
-            {/* SINGLE DRIVE MODE */}
-            {!isMixedDrives ? (
-              <div className="space-y-3">
-                <div className="relative">
+            {/* Dynamic Drive List (Unified presentation) */}
+            <div className="space-y-2.5 bg-slate-950/70 p-3.5 border border-slate-800 rounded-xl">
+              {mixedDriveItems.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2">
                   <select
-                    value={config.hddModelId}
-                    onChange={handleSingleHddChange}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-sky-500 transition cursor-pointer"
+                    value={item.hddModel.id}
+                    onChange={(e) => handleUpdateDriveModel(idx, e.target.value)}
+                    className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500 transition cursor-pointer truncate"
                   >
                     {HARD_DRIVES.map((hdd) => (
                       <option key={hdd.id} value={hdd.id}>
@@ -325,134 +280,103 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                       </option>
                     ))}
                   </select>
-                </div>
 
-                {/* Single Bay Occupancy & Slots */}
-                <div>
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5">
-                    <span>硬碟數量：{config.hddCount} 顆</span>
-                    <span className="text-sky-400 font-mono">
-                      佔用 {usedBays} / {nasModel.bays} Bay (剩餘 {freeBays} 空槽)
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-8 gap-2">
-                    {Array.from({ length: nasModel.bays }).map((_, idx) => {
-                      const isOccupied = idx < config.hddCount;
-                      return (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => handleSingleDiskCountChange(idx + 1)}
-                          className={`h-8 rounded-lg text-xs font-bold flex items-center justify-center transition cursor-pointer ${
-                            isOccupied
-                              ? 'bg-sky-500 text-white shadow-md shadow-sky-500/30'
-                              : 'bg-slate-800/90 text-slate-500 border border-dashed border-slate-700 hover:border-slate-500'
-                          }`}
-                          title={`點擊設定為 ${idx + 1} 顆硬碟`}
-                        >
-                          {idx + 1}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* MIXED DRIVES MODE */
-              <div className="space-y-2.5 bg-slate-950/70 p-3.5 border border-purple-900/50 rounded-xl">
-                <div className="flex items-center justify-between text-xs text-purple-300 pb-1 border-b border-purple-950">
-                  <span className="font-semibold flex items-center gap-1">
-                    <Shuffle className="w-3.5 h-3.5" />
-                    多型號/品牌硬碟混搭配單
-                  </span>
-                  <span className="font-mono font-bold text-sky-400">
-                    總計已選 {usedBays} / {nasModel.bays} Bay ({freeBays} 空槽)
-                  </span>
-                </div>
-
-                {/* Mixed Rows */}
-                {mixedDriveItems.map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <select
-                      value={item.hddModel.id}
-                      onChange={(e) => handleUpdateMixedDriveModel(idx, e.target.value)}
-                      className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-purple-500 transition cursor-pointer"
+                  {/* Quantity Counter Buttons */}
+                  <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg overflow-hidden flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateDriveCount(idx, -1)}
+                      disabled={item.count <= 1}
+                      className="px-2 py-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
+                      title="減少顆數"
                     >
-                      {HARD_DRIVES.map((hdd) => (
-                        <option key={hdd.id} value={hdd.id}>
-                          {hdd.brand} {hdd.series} {hdd.capacityTb}TB (NT$ {hdd.pricing.bestPrice?.toLocaleString()})
-                        </option>
-                      ))}
-                    </select>
-
-                    {/* Counter Buttons */}
-                    <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg overflow-hidden flex-shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateMixedDriveCount(idx, -1)}
-                        disabled={item.count <= 1}
-                        className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="px-2 font-mono font-bold text-xs text-slate-100">
-                        {item.count} 顆
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleUpdateMixedDriveCount(idx, 1)}
-                        disabled={usedBays >= nasModel.bays}
-                        className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                    </div>
-
-                    {/* Remove row */}
-                    {mixedDriveItems.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveMixedDriveRow(idx)}
-                        className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition cursor-pointer"
-                        title="移除此硬碟組合"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                      <Minus className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="px-2 font-mono font-bold text-xs text-slate-100 min-w-[36px] text-center">
+                      {item.count} 顆
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateDriveCount(idx, 1)}
+                      disabled={usedBays >= nasModel.bays}
+                      className="px-2 py-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
+                      title="增加顆數"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                ))}
 
-                {/* Add Row Button */}
-                {usedBays < nasModel.bays && (
-                  <button
-                    type="button"
-                    onClick={handleAddMixedDriveRow}
-                    className="w-full py-1.5 px-3 bg-purple-950/60 hover:bg-purple-900/60 border border-dashed border-purple-700/60 text-purple-300 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    新增另一款硬碟組合 (剩餘 {freeBays} 槽可用)
-                  </button>
-                )}
-              </div>
-            )}
+                  {/* Remove row button (if multiple rows) */}
+                  {mixedDriveItems.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveDriveRow(idx)}
+                      className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition cursor-pointer flex-shrink-0"
+                      title="移除此硬碟組合"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              {/* Add New Drive Row Button */}
+              {usedBays < nasModel.bays && (
+                <button
+                  type="button"
+                  onClick={handleAddDriveRow}
+                  className="w-full py-2 px-3 bg-slate-900 hover:bg-slate-800/90 border border-dashed border-slate-700 hover:border-slate-500 text-sky-400 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  混搭另一款硬碟 (剩餘 {freeBays} 槽可配置)
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* 3. RAID Mode Selector */}
+          {/* 3. RAID Mode Selector with Hover Tooltip for SHR-1 */}
           <div>
             <div className="flex items-center justify-between text-sm font-semibold text-slate-300 mb-1.5">
-              <span>RAID 磁碟陣列模式</span>
-              <span className="text-xs text-slate-400 font-normal">
-                {isMixedDrives ? '混搭推薦：Synology SHR-1' : '預設建議：RAID 5'}
+              <span className="flex items-center gap-1.5">
+                RAID 磁碟陣列模式
               </span>
+
+              {/* SHR-1 Hover Tooltip */}
+              <div className="relative group inline-block">
+                <span className="text-xs text-sky-400 font-medium flex items-center gap-1 cursor-help hover:text-sky-300 transition">
+                  <HelpCircle className="w-3.5 h-3.5 text-sky-400" />
+                  SHR-1 切片原理？
+                </span>
+
+                {/* Floating Tooltip Box */}
+                <div className="absolute right-0 bottom-full mb-2 w-80 sm:w-96 p-4 bg-slate-950 border border-sky-600/80 rounded-2xl shadow-2xl z-50 text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-all pointer-events-none group-hover:pointer-events-auto leading-relaxed animate-in fade-in zoom-in-95">
+                  <div className="font-bold text-sky-300 text-sm border-b border-slate-800 pb-1.5 mb-2 flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-amber-400" />
+                    Synology SHR-1 智慧切片技術原理
+                  </div>
+                  <p className="mb-2 text-slate-200">
+                    傳統 RAID 5 混搭硬碟時會被最小硬碟容量限制（例如 18TB+14TB 只能當 14TB 算，多出容量全數浪費）。
+                  </p>
+                  <div className="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800 space-y-1 text-slate-300">
+                    <div className="font-semibold text-sky-400">💡 SHR-1 垂直切片機制：</div>
+                    <div>• 共同基礎容量（如 14TB）組合成 RAID 5（單碟容錯）。</div>
+                    <div>• 多出的容量區塊（如 18TB 多出的 4TB）自動額外組合成 RAID 1（鏡像保護）。</div>
+                  </div>
+                  <div className="mt-2 pt-1.5 border-t border-slate-800 text-emerald-400 font-semibold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    不同容量硬碟混搭也能達成 0 空間浪費！
+                  </div>
+                </div>
+              </div>
             </div>
+
             <select
               value={config.raidType}
               onChange={handleRaidChange}
               className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-sky-500 transition cursor-pointer"
             >
               <option value="RAID5">RAID 5 (單碟容錯 / 推薦 / 至少 3 顆)</option>
-              <option value="SHR1">Synology SHR-1 (智慧單碟容錯 / 混搭首選)</option>
+              <option value="SHR1">Synology SHR-1 (智慧單碟容錯 / 混搭推薦首選)</option>
               <option value="RAID6">RAID 6 (雙碟容錯 / 高安全性 / 至少 4 顆)</option>
               <option value="RAID10">RAID 10 (極速讀寫 + 鏡像 / 偶數顆)</option>
               <option value="RAID1">RAID 1 (鏡像備份 / 2 顆)</option>

@@ -7,6 +7,8 @@ export const DEFAULT_PLANS: PlanConfiguration[] = [
     nasModelId: 'synology-ds1825-plus',
     hddModelId: 'seagate-ironwolf-pro-18tb',
     hddCount: 4,
+    isMixedDrives: true,
+    mixedDrives: [{ hddModelId: 'seagate-ironwolf-pro-18tb', count: 4 }],
     raidType: 'RAID5',
     selectedRamId: undefined, // 8GB ECC 標配
     selectedAddonIds: [],
@@ -18,6 +20,8 @@ export const DEFAULT_PLANS: PlanConfiguration[] = [
     nasModelId: 'synology-ds1825-neo-plus',
     hddModelId: 'toshiba-n300-14tb',
     hddCount: 5,
+    isMixedDrives: true,
+    mixedDrives: [{ hddModelId: 'toshiba-n300-14tb', count: 5 }],
     raidType: 'RAID5',
     selectedRamId: undefined,
     selectedAddonIds: [],
@@ -29,6 +33,8 @@ export const DEFAULT_PLANS: PlanConfiguration[] = [
     nasModelId: 'synology-ds1825-plus',
     hddModelId: 'seagate-ironwolf-pro-16tb',
     hddCount: 6,
+    isMixedDrives: true,
+    mixedDrives: [{ hddModelId: 'seagate-ironwolf-pro-16tb', count: 6 }],
     raidType: 'RAID6',
     selectedRamId: 'synology-ecc-16gb-d4ecso-3200', // +16GB ECC (總計 24GB)
     selectedAddonIds: ['synology-e10g18-t1'], // 10GbE 網卡
