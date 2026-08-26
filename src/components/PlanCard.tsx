@@ -3,6 +3,7 @@ import { CompletePlanEvaluation, RaidType } from '../types';
 import { NAS_MODELS } from '../data/nasModels';
 import { HARD_DRIVES, RAM_MODULES, ADDON_ACCESSORIES } from '../data/accessories';
 import { useComparisonStore } from '../store/useComparisonStore';
+import { getDualStorePricingInfo } from '../utils/priceFormatter';
 import {
   Server,
   HardDrive as HddIcon,
@@ -19,6 +20,7 @@ import {
   Plus,
   Minus,
   Sparkles,
+  Store,
 } from 'lucide-react';
 
 interface PlanCardProps {
@@ -44,6 +46,8 @@ export const PlanCard: React.FC<PlanCardProps> = ({
     compatibilityWarnings,
     shrAdvantageTb,
   } = evaluation;
+
+  const nasPriceInfo = getDualStorePricingInfo(nasModel.pricing);
 
   const handleNasChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newNasId = e.target.value;
@@ -210,7 +214,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                   type="button"
                   onClick={() => onOpenHardwareGuide('nas')}
                   className="text-slate-400 hover:text-sky-300 cursor-pointer"
-                  title="查看各機型特色與選購差異"
+                  title="查看各機型特色與 3.5/2.5 吋插槽支援說明"
                 >
                   <HelpCircle className="w-4 h-4" />
                 </button>
@@ -236,12 +240,28 @@ export const PlanCard: React.FC<PlanCardProps> = ({
               onChange={handleNasChange}
               className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-sky-500 transition cursor-pointer"
             >
-              {NAS_MODELS.map((model) => (
-                <option key={model.id} value={model.id}>
-                  {model.name} ({model.bays} Bay / {model.defaultRamGb}GB {model.defaultRamType} / {model.ethernetPorts}) - NT$ {model.pricing.bestPrice?.toLocaleString()}
-                </option>
-              ))}
+              {NAS_MODELS.map((model) => {
+                const info = getDualStorePricingInfo(model.pricing);
+                return (
+                  <option key={model.id} value={model.id}>
+                    {model.name} ({model.bays} Bay / {model.defaultRamGb}GB {model.defaultRamType}) [{info.dropdownText}] - 最低 NT$ {info.bestPrice.toLocaleString()}
+                  </option>
+                );
+              })}
             </select>
+
+            {/* Dual Store Comparison Banner for NAS */}
+            <div className="flex items-center justify-between mt-1 px-1 text-xs text-slate-400">
+              <span className="flex items-center gap-1">
+                <Store className="w-3 h-3 text-sky-400" />
+                原價屋: <strong className="text-slate-200">{nasPriceInfo.coolpcText}</strong>
+                <span className="text-slate-600">|</span>
+                欣亞: <strong className="text-slate-200">{nasPriceInfo.sinyaText}</strong>
+              </span>
+              {nasPriceInfo.diffText && (
+                <span className="text-emerald-400 font-medium">{nasPriceInfo.diffText}</span>
+              )}
+            </div>
           </div>
 
           {/* 2. Unified Hard Drive Configuration Section */}
@@ -266,59 +286,80 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             </div>
 
             {/* Dynamic Drive List (Unified presentation) */}
-            <div className="space-y-2.5 bg-slate-950/70 p-3.5 border border-slate-800 rounded-xl">
-              {mixedDriveItems.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2">
-                  <select
-                    value={item.hddModel.id}
-                    onChange={(e) => handleUpdateDriveModel(idx, e.target.value)}
-                    className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500 transition cursor-pointer truncate"
-                  >
-                    {HARD_DRIVES.map((hdd) => (
-                      <option key={hdd.id} value={hdd.id}>
-                        {hdd.brand} {hdd.series} {hdd.capacityTb}TB ({hdd.rpm}轉/{hdd.warrantyYears}年保) - NT$ {hdd.pricing.bestPrice?.toLocaleString()}/顆
-                      </option>
-                    ))}
-                  </select>
+            <div className="space-y-3 bg-slate-950/70 p-3.5 border border-slate-800 rounded-xl">
+              {mixedDriveItems.map((item, idx) => {
+                const driveInfo = getDualStorePricingInfo(item.hddModel.pricing);
+                return (
+                  <div key={idx} className="space-y-1 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/80">
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={item.hddModel.id}
+                        onChange={(e) => handleUpdateDriveModel(idx, e.target.value)}
+                        className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500 transition cursor-pointer truncate"
+                      >
+                        {HARD_DRIVES.map((hdd) => {
+                          const hInfo = getDualStorePricingInfo(hdd.pricing);
+                          return (
+                            <option key={hdd.id} value={hdd.id}>
+                              {hdd.brand} {hdd.series} {hdd.capacityTb}TB ({hdd.rpm}轉/{hdd.warrantyYears}年保) [{hInfo.dropdownText}] - NT$ {hInfo.bestPrice.toLocaleString()}
+                            </option>
+                          );
+                        })}
+                      </select>
 
-                  {/* Quantity Counter Buttons */}
-                  <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg overflow-hidden flex-shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => handleUpdateDriveCount(idx, -1)}
-                      disabled={item.count <= 1}
-                      className="px-2 py-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
-                      title="減少顆數"
-                    >
-                      <Minus className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="px-2 font-mono font-bold text-xs text-slate-100 min-w-[36px] text-center">
-                      {item.count} 顆
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleUpdateDriveCount(idx, 1)}
-                      disabled={usedBays >= nasModel.bays}
-                      className="px-2 py-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
-                      title="增加顆數"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
+                      {/* Quantity Counter Buttons */}
+                      <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg overflow-hidden flex-shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateDriveCount(idx, -1)}
+                          disabled={item.count <= 1}
+                          className="px-2 py-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
+                          title="減少顆數"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="px-2 font-mono font-bold text-xs text-slate-100 min-w-[36px] text-center">
+                          {item.count} 顆
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateDriveCount(idx, 1)}
+                          disabled={usedBays >= nasModel.bays}
+                          className="px-2 py-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
+                          title="增加顆數"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {/* Remove row button (if multiple rows) */}
+                      {mixedDriveItems.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveDriveRow(idx)}
+                          className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition cursor-pointer flex-shrink-0"
+                          title="移除此硬碟組合"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Dual Store Pricing Row for This Specific HDD */}
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-0.5">
+                      <span className="flex items-center gap-1.5">
+                        <Store className="w-3 h-3 text-sky-400" />
+                        原價屋: <strong className="text-slate-200">{driveInfo.coolpcText}</strong>
+                        <span className="text-slate-600">|</span>
+                        欣亞: <strong className="text-slate-200">{driveInfo.sinyaText}</strong>
+                      </span>
+                      {driveInfo.diffText && (
+                        <span className="text-emerald-400 font-medium">{driveInfo.diffText}</span>
+                      )}
+                    </div>
                   </div>
-
-                  {/* Remove row button (if multiple rows) */}
-                  {mixedDriveItems.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveDriveRow(idx)}
-                      className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition cursor-pointer flex-shrink-0"
-                      title="移除此硬碟組合"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-              ))}
+                );
+              })}
 
               {/* Add New Drive Row Button */}
               {usedBays < nasModel.bays && (
@@ -407,11 +448,14 @@ export const PlanCard: React.FC<PlanCardProps> = ({
               <option value="none">
                 標配 {nasModel.defaultRamGb}GB {nasModel.defaultRamType} (大檔傳輸/備份足夠) - NT$ 0
               </option>
-              {RAM_MODULES.map((ram) => (
-                <option key={ram.id} value={ram.id}>
-                  加購 +{ram.capacityGb}GB ({ram.brand} {ram.type}) - NT$ {ram.pricing.bestPrice?.toLocaleString()}
-                </option>
-              ))}
+              {RAM_MODULES.map((ram) => {
+                const info = getDualStorePricingInfo(ram.pricing);
+                return (
+                  <option key={ram.id} value={ram.id}>
+                    加購 +{ram.capacityGb}GB ({ram.brand} {ram.type}) [{info.dropdownText}] - 最低 NT$ {info.bestPrice.toLocaleString()}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
@@ -433,6 +477,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             <div className="space-y-2">
               {ADDON_ACCESSORIES.map((addon) => {
                 const isSelected = config.selectedAddonIds.includes(addon.id);
+                const info = getDualStorePricingInfo(addon.pricing);
                 return (
                   <label
                     key={addon.id}
@@ -449,10 +494,15 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                         onChange={() => handleToggleAddon(addon.id)}
                         className="rounded border-slate-700 text-sky-500 focus:ring-0 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-200 truncate text-xs">{addon.name}</span>
+                      <div>
+                        <div className="font-medium text-slate-200 truncate text-xs">{addon.name}</div>
+                        <div className="text-[11px] text-slate-400">
+                          原: {info.coolpcPrice ? `NT$ ${info.coolpcPrice.toLocaleString()}` : '無'} | 欣: {info.sinyaPrice ? `NT$ ${info.sinyaPrice.toLocaleString()}` : '無'}
+                        </div>
+                      </div>
                     </div>
-                    <span className="font-mono text-slate-300 flex-shrink-0 text-xs">
-                      +NT$ {addon.pricing.bestPrice?.toLocaleString()}
+                    <span className="font-mono text-slate-300 flex-shrink-0 text-xs font-semibold">
+                      +NT$ {info.bestPrice.toLocaleString()}
                     </span>
                   </label>
                 );
@@ -503,13 +553,13 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           <div className="flex justify-between items-center text-slate-400">
             <span>原價屋估算總價：</span>
             <span className="font-mono text-slate-200">
-              {cost.totalCoolpc ? `NT$ ${cost.totalCoolpc.toLocaleString()}` : '品項缺貨/無報價'}
+              {cost.totalCoolpc ? `NT$ ${cost.totalCoolpc.toLocaleString()}` : '部分品項缺貨/無報價'}
             </span>
           </div>
           <div className="flex justify-between items-center text-slate-400">
             <span>欣亞數位估算總價：</span>
             <span className="font-mono text-slate-200">
-              {cost.totalSinya ? `NT$ ${cost.totalSinya.toLocaleString()}` : '品項缺貨/無報價'}
+              {cost.totalSinya ? `NT$ ${cost.totalSinya.toLocaleString()}` : '部分品項缺貨/無報價'}
             </span>
           </div>
           <div className="flex justify-between items-center pt-2 border-t border-slate-800">

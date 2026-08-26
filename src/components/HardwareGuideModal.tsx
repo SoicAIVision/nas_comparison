@@ -139,6 +139,30 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
               </div>
 
               <div className="p-4 sm:p-5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2">
+                <div className="font-bold text-sm text-slate-200 flex items-center gap-1.5">
+                  <HardDrive className="w-4 h-4 text-sky-400" />
+                  DS1825+ 是否有限制 3.5 吋或 2.5 吋硬碟？
+                </div>
+                <p className="text-slate-400 text-xs sm:text-sm">
+                  <strong>完全沒有限制，DS1825+ 原生通用支援 3.5 吋與 2.5 吋！</strong>
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
+                  <div className="p-2.5 bg-slate-900 border border-slate-800 rounded-lg">
+                    <strong className="text-slate-200 block mb-0.5">1. 3.5 吋 SATA HDD</strong>
+                    <span className="text-slate-400">免工具卡扣托盤，50TB 以上巨量儲存首選（單碟可達 14TB~24TB）。</span>
+                  </div>
+                  <div className="p-2.5 bg-slate-900 border border-slate-800 rounded-lg">
+                    <strong className="text-slate-200 block mb-0.5">2. 2.5 吋 SATA SSD / HDD</strong>
+                    <span className="text-slate-400">托盤底部預留標準 2.5 吋螺絲孔，可安裝 2.5 吋 SATA 固態硬碟。</span>
+                  </div>
+                  <div className="p-2.5 bg-slate-900 border border-slate-800 rounded-lg">
+                    <strong className="text-slate-200 block mb-0.5">3. 雙 M.2 2280 NVMe SSD</strong>
+                    <span className="text-slate-400">機身底部專屬免工具快拆槽，可用於讀寫快取或建立全快閃儲存池。</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 sm:p-5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2">
                 <div className="font-bold text-sm text-slate-200">為什麼不優先選擇 4-Bay (DS923+) 或 5-Bay (DS1522+)？</div>
                 <p className="text-slate-400 text-xs sm:text-sm">
                   建置 50TB 有效容量若採用 4-Bay NAS (RAID 5)，必須購買 4 顆 18TB 或 20TB 硬碟，<strong>4 個槽位將直接全部插滿</strong>。未來一旦空間不足，無法透過「加裝硬碟」無痛擴充，必須承擔高成本整批更換大容量硬碟。
