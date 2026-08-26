@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useComparisonStore } from './store/useComparisonStore';
 import { Navbar } from './components/Navbar';
 import { PlanCard } from './components/PlanCard';
@@ -7,10 +7,12 @@ import { VisualCharts } from './components/VisualCharts';
 import { HardwareGuideModal } from './components/HardwareGuideModal';
 import { ExportModal } from './components/ExportModal';
 import { PriceOverrideModal } from './components/PriceOverrideModal';
-import { Plus, Sliders, ShieldCheck, Sparkles, ExternalLink, BookOpen } from 'lucide-react';
+import { Plus, Sliders, ShieldCheck, Sparkles, ExternalLink, BookOpen, CheckCircle, X } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const { init, getEvaluatedPlans, addPlan } = useComparisonStore();
+  const { init, getEvaluatedPlans, addPlan, toastNotification, dismissToast } = useComparisonStore();
+  const planSectionRef = useRef<HTMLDivElement>(null);
+
   const [guideModalConfig, setGuideModalConfig] = useState<{
     isOpen: boolean;
     tab: 'nas' | 'hdd' | 'ram' | 'addons';
@@ -29,10 +31,28 @@ export const App: React.FC = () => {
     init();
   }, [init]);
 
+  // Auto-scroll and auto-dismiss toast when plan is added
+  useEffect(() => {
+    if (toastNotification) {
+      // Smooth scroll to the plan cards section
+      if (planSectionRef.current) {
+        planSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      const timer = setTimeout(() => {
+        dismissToast();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastNotification, dismissToast]);
+
   const evaluations = getEvaluatedPlans();
 
   const handleOpenGuide = (tab: 'nas' | 'hdd' | 'ram' | 'addons' = 'nas') => {
     setGuideModalConfig({ isOpen: true, tab });
+  };
+
+  const handleAddPlanClick = () => {
+    addPlan();
   };
 
   return (
@@ -87,21 +107,38 @@ export const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Plan Cards Grid - 3 Columns for optimal readability */}
-        <section className="space-y-3">
+        {/* Plan Cards Grid Section */}
+        <section ref={planSectionRef} className="space-y-3 scroll-mt-20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sliders className="w-5 h-5 text-sky-400" />
               <h3 className="text-base font-bold text-white">方案自訂與硬體配置 ({evaluations.length} 組比較方案)</h3>
             </div>
             <button
-              onClick={() => addPlan()}
-              className="text-xs text-sky-400 hover:text-sky-300 font-semibold flex items-center gap-1 transition"
+              onClick={handleAddPlanClick}
+              className="text-xs text-sky-400 hover:text-sky-300 font-semibold flex items-center gap-1.5 bg-slate-900 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded-lg transition"
             >
               <Plus className="w-4 h-4" />
               新增比較方案
             </button>
           </div>
+
+          {/* In-page Non-popup Toast Notification Banner */}
+          {toastNotification && (
+            <div className="p-3 bg-emerald-950/80 border border-emerald-700/80 rounded-xl text-xs text-emerald-200 flex items-center justify-between shadow-lg animate-in slide-in-from-top-2 fade-in">
+              <div className="flex items-center gap-2 font-medium">
+                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span>{toastNotification}</span>
+              </div>
+              <button
+                onClick={dismissToast}
+                className="p-1 text-emerald-400 hover:text-emerald-100 hover:bg-emerald-900/60 rounded-md transition"
+                title="關閉提示"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {evaluations.map((evaluation) => (

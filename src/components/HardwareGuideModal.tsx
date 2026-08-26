@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Server, HardDrive, Cpu, Zap, Info } from 'lucide-react';
+import { X, Server, HardDrive, Cpu, Zap, Info, AlertOctagon } from 'lucide-react';
 
 interface HardwareGuideModalProps {
   isOpen: boolean;
@@ -17,12 +17,19 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] flex flex-col justify-between">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in cursor-pointer"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-slate-900 border border-slate-700 rounded-2xl max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] flex flex-col justify-between cursor-default"
+      >
         {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg transition"
+          title="關閉指南 (亦可點擊外部空白處關閉)"
         >
           <X className="w-5 h-5" />
         </button>
@@ -141,15 +148,56 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
             </div>
           )}
 
-          {/* TAB 2: HDDs */}
+          {/* TAB 2: HDDs (Enhanced with why PC drives are dangerous) */}
           {activeTab === 'hdd' && (
             <div className="space-y-4">
+              {/* Special Warning: Why NOT regular Desktop PC Hard Drives */}
+              <div className="p-4 bg-rose-950/40 border border-rose-800/60 rounded-xl space-y-2.5">
+                <div className="font-bold text-sm text-rose-300 flex items-center gap-1.5">
+                  <AlertOctagon className="w-4 h-4 text-rose-400" />
+                  為什麼必須使用 NAS 專用硬碟？能不能拿一般便宜的桌上型 PC 硬碟來用？
+                </div>
+                <p className="text-rose-200/90 leading-relaxed">
+                  許多人會好奇：「一般桌機硬碟便宜不少，能不能買來裝在 NAS 裡？」答案是：<strong>強烈不建議，尤其在 8-Bay 機型與 RAID 陣列環境下極易發生災難性故障！</strong>
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-slate-200">
+                  <div className="p-3 bg-slate-900/80 border border-rose-900/40 rounded-lg space-y-1">
+                    <div className="font-bold text-rose-300">1. 多硬碟旋轉共振 (RV 感測器)</div>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      8-Bay 機箱內多顆硬碟同時旋轉會產生巨大的震動共振。<strong>一般 PC 硬碟沒有旋轉震動感測器 (RV Sensors)</strong>，在多碟共振下會造成讀寫磁頭劇烈抖動偏移，導致嚴重的傳輸掉速、讀寫錯誤甚至<strong>磁頭直接劃傷碟盤造成實體壞軌</strong>。NAS 碟均內建硬體 RV 震動感測器能即時動態補償。
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-slate-900/80 border border-rose-900/40 rounded-lg space-y-1">
+                    <div className="font-bold text-rose-300">2. 錯誤復原控制 (TLER) 與 RAID「掉盤」危機</div>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      一般 PC 碟遇到讀取小錯誤時，會嘗試自行修復長達 <strong>30~60 秒</strong>（畫面卡死）。但在 NAS 的 RAID 5 陣列中，RAID 控制器只要 <strong>7~8 秒</strong> 得不到硬碟回應，就會<strong>直接判定該硬碟故障並將其「強制踢出陣列 (Drop Drive)」</strong>，造成 RAID 降級甚至崩潰！NAS 碟具備 <strong>TLER (限時錯誤復原)</strong>，7 秒內會主動將錯誤交由 RAID 奇偶校驗即時修復，不會輕易掉盤。
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-slate-900/80 border border-rose-900/40 rounded-lg space-y-1">
+                    <div className="font-bold text-rose-300">3. 24x7 運轉壽命與工作負載量 (MTBF)</div>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      一般 PC 碟是依照「每天開機 8 小時、每年 55 TB 讀寫量」設計；NAS 碟則是為 <strong>24x7 全年無休連續運轉、每年 180~550 TB 企業級負載量</strong> 設計，平均故障間隔 (MTBF) 高達 100~250 萬小時。
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-slate-900/80 border border-rose-900/40 rounded-lg space-y-1">
+                    <div className="font-bold text-rose-300">4. CMR 傳統記錄 vs SMR 疊瓦陷阱</div>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      市售許多便宜 PC 碟採用 SMR (疊瓦式記錄)，在 RAID 陣列重建 (Rebuild) 時會發生<strong>斷崖式掉速（降至 1~5 MB/s）甚至逾時造成重建失敗</strong>。所有推薦的 NAS 專用碟保證全系列採用 <strong>CMR (傳統垂直磁記錄)</strong>。
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recommended HDD Brands */}
               <div className="p-4 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2">
                 <div className="font-bold text-sm text-emerald-400 flex items-center gap-1.5">
                   <HardDrive className="w-4 h-4" />
-                  NAS 專用硬碟品牌與系列選購要點
+                  主流 NAS 專用硬碟系列特性比較
                 </div>
-                <p>NAS 專用硬碟專為 24x7 小時不間斷運轉、多硬碟共振抑制（RV 感測器）與 RAID 錯誤復原（TLER/ERC）設計：</p>
                 <div className="space-y-2.5 pt-1">
                   <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg">
                     <div className="font-bold text-slate-100 flex items-center justify-between">
@@ -177,7 +225,7 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
                       <span className="text-[10px] text-emerald-400 font-mono">7200轉 / 512MB 快取 / 180TB/年 / 3年保</span>
                     </div>
                     <p className="text-[11px] text-slate-400 mt-1">
-                      單 TB 建置成本最低的價格破壞者，若預算有限且追求每 TB 成本極致划算，Toshiba 14TB/16TB 為首選。
+                      單 TB 建置成本最低的價格破壞者，若追求每 TB 成本極致划算，Toshiba 14TB/16TB 為首選。
                     </p>
                   </div>
                 </div>
@@ -265,7 +313,8 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="mt-4 pt-3 border-t border-slate-800 flex justify-end">
+        <div className="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
+          <span>提示：點擊半透明空白處亦可快速關閉</span>
           <button
             onClick={onClose}
             className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-semibold transition"

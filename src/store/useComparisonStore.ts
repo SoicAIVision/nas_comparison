@@ -23,6 +23,7 @@ interface ComparisonState {
   isRefreshing: boolean;
   refreshStatus: { type: 'idle' | 'loading' | 'success' | 'error'; message?: string };
   priceOverrides: Record<string, number>; // itemId -> custom price
+  toastNotification: string | null;
 
   // Actions
   init: () => Promise<void>;
@@ -34,6 +35,7 @@ interface ComparisonState {
   refreshPrices: () => Promise<void>;
   setPriceOverride: (itemId: string, price: number) => void;
   clearPriceOverride: (itemId: string) => void;
+  dismissToast: () => void;
 
   // Selectors / Evaluators
   getEvaluatedPlans: () => CompletePlanEvaluation[];
@@ -45,6 +47,7 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
   isRefreshing: false,
   refreshStatus: { type: 'idle' },
   priceOverrides: {},
+  toastNotification: null,
 
   init: async () => {
     // 1. Check URL Hash for shared configuration
@@ -79,7 +82,10 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
     };
 
     const updated = [...existingPlans, newPlan];
-    set({ plans: updated });
+    set({
+      plans: updated,
+      toastNotification: `✨ 已新增「${newPlan.name}」！已為您自動新增至下方卡片清單。`,
+    });
 
     // Sync to URL Hash
     if (typeof window !== 'undefined') {
@@ -100,12 +106,19 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
     };
 
     const updated = [...existingPlans, newPlan];
-    set({ plans: updated });
+    set({
+      plans: updated,
+      toastNotification: `✨ 已複製「${newPlan.name}」！可於下方卡片直接微調。`,
+    });
 
     if (typeof window !== 'undefined') {
       const hashStr = encodePlansToHash(updated);
       window.location.hash = `/compare?data=${hashStr}`;
     }
+  },
+
+  dismissToast: () => {
+    set({ toastNotification: null });
   },
 
   removePlan: (planId: string) => {
