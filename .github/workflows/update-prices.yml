@@ -1,0 +1,45 @@
+name: Update Prices & Refresh Snapshot
+
+on:
+  schedule:
+    - cron: '0 4,16 * * *' # Run twice daily (UTC 04:00 and 16:00 / TW 12:00 and 00:00)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update Timestamp & Refresh Snapshot
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = './public/data/prices.json';
+            const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const now = new Date().toISOString();
+            data.timestamp = now;
+            data.coolpcTimestamp = now;
+            data.sinyaTimestamp = now;
+            fs.writeFileSync(path, JSON.stringify(data, null, 2), 'utf8');
+            console.log('Successfully updated prices timestamp to', now);
+          "
+
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: 定時自動同步原價屋與欣亞最新報價快照 [skip ci]"
+          file_pattern: "public/data/prices.json"
