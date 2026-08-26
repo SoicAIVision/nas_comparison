@@ -1,9 +1,15 @@
 import { NasModel, HardDrive, RamModule, AddonAccessory, PlanCostBreakdown } from '../types';
 
+export interface DriveItemParam {
+  hddModel: HardDrive;
+  count: number;
+}
+
 export interface CalculatePlanCostParams {
   nasModel: NasModel;
-  hddModel: HardDrive;
-  hddCount: number;
+  hddModel?: HardDrive;
+  hddCount?: number;
+  mixedDrives?: DriveItemParam[];
   ramModule?: RamModule;
   addons: AddonAccessory[];
   usableTb: number;
@@ -11,9 +17,10 @@ export interface CalculatePlanCostParams {
 
 /**
  * Calculates itemized costs and store comparisons (CoolPC, Sinyaw, Best Mixed)
+ * Supporting both single HDD model and mixed HDD models.
  */
 export function calculatePlanCost(params: CalculatePlanCostParams): PlanCostBreakdown {
-  const { nasModel, hddModel, hddCount, ramModule, addons, usableTb } = params;
+  const { nasModel, hddModel, hddCount = 0, mixedDrives, ramModule, addons, usableTb } = params;
 
   // 1. NAS Mainframe cost
   const nasCoolpc = nasModel.pricing.coolpc?.inStock ? nasModel.pricing.coolpc.price : undefined;
@@ -21,14 +28,57 @@ export function calculatePlanCost(params: CalculatePlanCostParams): PlanCostBrea
   const nasBest = nasModel.pricing.bestPrice || Math.min(...[nasCoolpc, nasSinya].filter((p): p is number => p !== undefined));
   const nasSource = nasModel.pricing.bestSource || (nasBest === nasCoolpc ? 'coolpc' : 'sinya');
 
-  // 2. HDD costs
-  const hddUnitPriceCoolpc = hddModel.pricing.coolpc?.inStock ? hddModel.pricing.coolpc.price : undefined;
-  const hddUnitPriceSinya = hddModel.pricing.sinya?.inStock ? hddModel.pricing.sinya.price : undefined;
-  const hddBestUnitPrice = hddModel.pricing.bestPrice || Math.min(...[hddUnitPriceCoolpc, hddUnitPriceSinya].filter((p): p is number => p !== undefined));
-  const hddCoolpcTotal = hddUnitPriceCoolpc ? hddUnitPriceCoolpc * hddCount : undefined;
-  const hddSinyaTotal = hddUnitPriceSinya ? hddUnitPriceSinya * hddCount : undefined;
-  const hddBestTotal = hddBestUnitPrice * hddCount;
-  const hddSource = hddModel.pricing.bestSource || (hddBestUnitPrice === hddUnitPriceCoolpc ? 'coolpc' : 'sinya');
+  // 2. HDD costs (Single or Mixed)
+  const driveItems: DriveItemParam[] =
+    mixedDrives && mixedDrives.length > 0
+      ? mixedDrives
+      : hddModel && hddCount > 0
+      ? [{ hddModel, count: hddCount }]
+      : [];
+
+  let hddCoolpcTotal: number | undefined = 0;
+  let hddSinyaTotal: number | undefined = 0;
+  let hddBestTotal = 0;
+  let totalDiskCount = 0;
+  const itemizedBreakdown: { name: string; count: number; unitPrice: number; subtotal: number }[] = [];
+
+  for (const item of driveItems) {
+    const model = item.hddModel;
+    const count = item.count;
+    totalDiskCount += count;
+
+    const unitCoolpc = model.pricing.coolpc?.inStock ? model.pricing.coolpc.price : undefined;
+    const unitSinya = model.pricing.sinya?.inStock ? model.pricing.sinya.price : undefined;
+    const unitBest = model.pricing.bestPrice || Math.min(...[unitCoolpc, unitSinya].filter((p): p is number => p !== undefined));
+
+    if (hddCoolpcTotal !== undefined) {
+      if (unitCoolpc !== undefined) {
+        hddCoolpcTotal += unitCoolpc * count;
+      } else {
+        hddCoolpcTotal = undefined; // At least one drive out of stock at Coolpc
+      }
+    }
+
+    if (hddSinyaTotal !== undefined) {
+      if (unitSinya !== undefined) {
+        hddSinyaTotal += unitSinya * count;
+      } else {
+        hddSinyaTotal = undefined; // At least one drive out of stock at Sinya
+      }
+    }
+
+    const subtotal = unitBest * count;
+    hddBestTotal += subtotal;
+    itemizedBreakdown.push({
+      name: `${model.brand} ${model.series} ${model.capacityTb}TB`,
+      count,
+      unitPrice: unitBest,
+      subtotal,
+    });
+  }
+
+  const hddBestUnitPrice = totalDiskCount > 0 ? Math.round(hddBestTotal / totalDiskCount) : 0;
+  const hddSource = driveItems.length > 1 ? 'mixed' : driveItems[0]?.hddModel.pricing.bestSource || 'best';
 
   // 3. RAM cost
   let ramCoolpc: number | undefined = undefined;
@@ -79,7 +129,14 @@ export function calculatePlanCost(params: CalculatePlanCostParams): PlanCostBrea
 
   return {
     nasCost: { coolpc: nasCoolpc, sinya: nasSinya, best: nasBest, source: nasSource },
-    hddCost: { coolpc: hddCoolpcTotal, sinya: hddSinyaTotal, best: hddBestTotal, unitPrice: hddBestUnitPrice, source: hddSource },
+    hddCost: {
+      coolpc: hddCoolpcTotal,
+      sinya: hddSinyaTotal,
+      best: hddBestTotal,
+      unitPrice: hddBestUnitPrice,
+      source: hddSource,
+      items: itemizedBreakdown,
+    },
     ramCost: { coolpc: ramCoolpc, sinya: ramSinya, best: ramBest, source: ramSource },
     addonsCost: { coolpc: addonsCoolpcTotal, sinya: addonsSinyaTotal, best: addonsBestTotal, source: 'mixed' },
     totalCoolpc,

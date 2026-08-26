@@ -86,21 +86,42 @@ export interface StorageCalculationResult {
   storageEfficiencyPercent: number;
 }
 
+export interface DriveSelection {
+  hddModelId: string;
+  count: number;
+}
+
 export interface PlanConfiguration {
   id: string;
   name: string; // e.g. "方案 A (DS1825+ 4x18TB)"
   nasModelId: string;
-  hddModelId: string;
-  hddCount: number;
+  isMixedDrives?: boolean;
+  mixedDrives?: DriveSelection[];
+  hddModelId: string; // primary / single drive
+  hddCount: number; // single drive count
   raidType: RaidType;
   selectedRamId?: string;
   selectedAddonIds: string[];
   customNotes?: string;
 }
 
+export interface EvaluatedDriveItem {
+  hddModel: HardDrive;
+  count: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
 export interface PlanCostBreakdown {
   nasCost: { coolpc?: number; sinya?: number; best: number; source: string };
-  hddCost: { coolpc?: number; sinya?: number; best: number; unitPrice: number; source: string };
+  hddCost: {
+    coolpc?: number;
+    sinya?: number;
+    best: number;
+    unitPrice: number;
+    source: string;
+    items?: { name: string; count: number; unitPrice: number; subtotal: number }[];
+  };
   ramCost: { coolpc?: number; sinya?: number; best: number; source: string };
   addonsCost: { coolpc?: number; sinya?: number; best: number; source: string };
   totalCoolpc?: number;
@@ -114,6 +135,8 @@ export interface CompletePlanEvaluation {
   config: PlanConfiguration;
   nasModel: NasModel;
   hddModel: HardDrive;
+  isMixedDrives: boolean;
+  mixedDriveItems: EvaluatedDriveItem[];
   ramModule?: RamModule;
   addons: AddonAccessory[];
   storage: StorageCalculationResult;
@@ -123,6 +146,7 @@ export interface CompletePlanEvaluation {
   totalRamGb: number;
   ramIsEcc: boolean;
   compatibilityWarnings: string[];
+  shrAdvantageTb?: number; // Advantage in TB if switching to SHR
 }
 
 export interface ScrapedPriceDatabase {

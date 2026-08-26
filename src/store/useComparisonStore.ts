@@ -7,11 +7,12 @@ import {
   HardDrive,
   RamModule,
   AddonAccessory,
+  EvaluatedDriveItem,
 } from '../types';
 import { NAS_MODELS } from '../data/nasModels';
 import { HARD_DRIVES, RAM_MODULES, ADDON_ACCESSORIES } from '../data/accessories';
 import { DEFAULT_PLANS } from '../data/defaultPlans';
-import { calculateStorageCapacity } from '../utils/raidCalculator';
+import { calculateMixedStorageCapacity } from '../utils/raidCalculator';
 import { calculatePlanCost } from '../utils/costCalculator';
 import { encodePlansToHash, decodePlansFromHash } from '../utils/urlSync';
 import { fetchLatestPrices } from '../services/priceFetcher';
@@ -206,16 +207,57 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
         nasModel.pricing.bestSource = 'manual';
       }
 
-      // 2. Resolve HDD
-      const baseHdd = HARD_DRIVES.find((h) => h.id === config.hddModelId) || HARD_DRIVES[0];
-      const hddPricing = priceDb?.items[baseHdd.id] || baseHdd.pricing;
-      const hddModel: HardDrive = {
-        ...baseHdd,
-        pricing: matchAndMergePrices(hddPricing),
-      };
-      if (priceOverrides[hddModel.id] !== undefined) {
-        hddModel.pricing.bestPrice = priceOverrides[hddModel.id];
-        hddModel.pricing.bestSource = 'manual';
+      // 2. Resolve HDD (Single or Mixed)
+      const isMixed = !!config.isMixedDrives && Array.isArray(config.mixedDrives) && config.mixedDrives.length > 0;
+      let evaluatedDriveItems: EvaluatedDriveItem[] = [];
+      let primaryHddModel: HardDrive;
+      let diskCapacities: number[] = [];
+
+      if (isMixed && config.mixedDrives) {
+        for (const item of config.mixedDrives) {
+          const baseItemHdd = HARD_DRIVES.find((h) => h.id === item.hddModelId) || HARD_DRIVES[0];
+          const hPricing = priceDb?.items[baseItemHdd.id] || baseItemHdd.pricing;
+          const hModel: HardDrive = {
+            ...baseItemHdd,
+            pricing: matchAndMergePrices(hPricing),
+          };
+          if (priceOverrides[hModel.id] !== undefined) {
+            hModel.pricing.bestPrice = priceOverrides[hModel.id];
+            hModel.pricing.bestSource = 'manual';
+          }
+          const unitP = hModel.pricing.bestPrice || 0;
+          evaluatedDriveItems.push({
+            hddModel: hModel,
+            count: item.count,
+            unitPrice: unitP,
+            totalPrice: unitP * item.count,
+          });
+          for (let i = 0; i < item.count; i++) {
+            diskCapacities.push(hModel.capacityTb);
+          }
+        }
+        primaryHddModel = evaluatedDriveItems[0]?.hddModel || HARD_DRIVES[0];
+      } else {
+        const baseHdd = HARD_DRIVES.find((h) => h.id === config.hddModelId) || HARD_DRIVES[0];
+        const hddPricing = priceDb?.items[baseHdd.id] || baseHdd.pricing;
+        primaryHddModel = {
+          ...baseHdd,
+          pricing: matchAndMergePrices(hddPricing),
+        };
+        if (priceOverrides[primaryHddModel.id] !== undefined) {
+          primaryHddModel.pricing.bestPrice = priceOverrides[primaryHddModel.id];
+          primaryHddModel.pricing.bestSource = 'manual';
+        }
+        const unitP = primaryHddModel.pricing.bestPrice || 0;
+        evaluatedDriveItems = [
+          {
+            hddModel: primaryHddModel,
+            count: config.hddCount,
+            unitPrice: unitP,
+            totalPrice: unitP * config.hddCount,
+          },
+        ];
+        diskCapacities = Array(config.hddCount).fill(primaryHddModel.capacityTb);
       }
 
       // 3. Resolve RAM
@@ -253,32 +295,42 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
         })
         .filter((a): a is AddonAccessory => a !== null);
 
-      // 5. Calculate storage (RAID 5 by default)
-      const storage = calculateStorageCapacity({
-        diskCount: config.hddCount,
-        diskCapacityTb: hddModel.capacityTb,
+      // 5. Calculate storage with Slicing & SHR support
+      const storage = calculateMixedStorageCapacity({
+        diskCapacities,
         raidType: config.raidType,
       });
+
+      // Calculate SHR advantage if applicable
+      let shrAdvantageTb: number | undefined = undefined;
+      if (config.raidType === 'RAID5' && isMixed) {
+        const shrStorage = calculateMixedStorageCapacity({
+          diskCapacities,
+          raidType: 'SHR1',
+        });
+        if (shrStorage.usableTb > storage.usableTb) {
+          shrAdvantageTb = shrStorage.usableTb - storage.usableTb;
+        }
+      }
 
       // 6. Calculate costs
       const cost = calculatePlanCost({
         nasModel,
-        hddModel,
-        hddCount: config.hddCount,
+        mixedDrives: evaluatedDriveItems,
         ramModule,
         addons,
         usableTb: storage.usableTb,
       });
 
       // 7. Calculate Bay stats & compatibility
-      const usedBays = config.hddCount;
+      const usedBays = evaluatedDriveItems.reduce((acc, curr) => acc + curr.count, 0);
       const freeBays = Math.max(0, nasModel.bays - usedBays);
       const totalRamGb = nasModel.defaultRamGb + (ramModule?.capacityGb || 0);
       const ramIsEcc = nasModel.defaultRamType.includes('ECC') && (!ramModule || ramModule.type.includes('ECC'));
 
       const compatibilityWarnings: string[] = [];
-      if (config.hddCount > nasModel.bays) {
-        compatibilityWarnings.push(`硬碟數量 (${config.hddCount}) 超過主機原生 Bay 數 (${nasModel.bays})，需加購擴充櫃！`);
+      if (usedBays > nasModel.bays) {
+        compatibilityWarnings.push(`總硬碟數量 (${usedBays}) 超過主機原生 Bay 數 (${nasModel.bays})，需加購擴充櫃！`);
       }
       if (totalRamGb > nasModel.maxRamGb) {
         compatibilityWarnings.push(`總記憶體 (${totalRamGb}GB) 超過原廠最大支援上限 (${nasModel.maxRamGb}GB)！`);
@@ -290,7 +342,9 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
       return {
         config,
         nasModel,
-        hddModel,
+        hddModel: primaryHddModel,
+        isMixedDrives: isMixed,
+        mixedDriveItems: evaluatedDriveItems,
         ramModule,
         addons,
         storage,
@@ -300,6 +354,7 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
         totalRamGb,
         ramIsEcc,
         compatibilityWarnings,
+        shrAdvantageTb,
       };
     });
   },

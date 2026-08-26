@@ -1,6 +1,6 @@
 import React from 'react';
 import { CompletePlanEvaluation } from '../types';
-import { CheckCircle2, ShieldCheck, ShieldAlert, Trophy, DollarSign } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, ShieldAlert, Trophy, DollarSign, Shuffle } from 'lucide-react';
 
 interface ComparisonMatrixProps {
   evaluations: CompletePlanEvaluation[];
@@ -96,12 +96,28 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ evaluations 
               </td>
               {evaluations.map((e) => (
                 <td key={e.config.id} className="py-3.5 px-4">
-                  <div className="font-semibold text-slate-100 text-sm">
-                    {e.config.hddCount} 顆 × {e.hddModel.brand} {e.hddModel.capacityTb}TB
-                  </div>
-                  <div className="text-xs text-slate-400 mt-0.5">
-                    {e.hddModel.series} ({e.hddModel.rpm}轉 / CMR / {e.hddModel.warrantyYears}年保)
-                  </div>
+                  {e.isMixedDrives ? (
+                    <div className="space-y-1">
+                      <div className="text-xs font-semibold text-purple-300 flex items-center gap-1">
+                        <Shuffle className="w-3 h-3" />
+                        混搭硬碟組合：
+                      </div>
+                      {e.mixedDriveItems.map((item, idx) => (
+                        <div key={idx} className="text-xs text-slate-200">
+                          • {item.count} 顆 × {item.hddModel.brand} {item.hddModel.capacityTb}TB ({item.hddModel.series})
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="font-semibold text-slate-100 text-sm">
+                        {e.config.hddCount} 顆 × {e.hddModel.brand} {e.hddModel.capacityTb}TB
+                      </div>
+                      <div className="text-xs text-slate-400 mt-0.5">
+                        {e.hddModel.series} ({e.hddModel.rpm}轉 / CMR / {e.hddModel.warrantyYears}年保)
+                      </div>
+                    </div>
+                  )}
                 </td>
               ))}
             </tr>
@@ -143,6 +159,11 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ evaluations 
                         </span>
                       )}
                     </div>
+                    {e.storage.unallocatedTb > 0 && (
+                      <div className="text-[11px] text-amber-400 mt-0.5">
+                        ⚠️ 陣列瓶頸導致 {e.storage.unallocatedTb}TB 空間浪費
+                      </div>
+                    )}
                     <div className="mt-1.5 flex items-center gap-1.5">
                       {e.storage.meets50TbTarget ? (
                         <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-semibold">

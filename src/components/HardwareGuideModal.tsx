@@ -192,40 +192,28 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
                 </div>
               </div>
 
-              {/* Recommended HDD Brands */}
-              <div className="p-4 sm:p-5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
-                <div className="font-bold text-base text-emerald-400 flex items-center gap-2">
-                  <HardDrive className="w-5 h-5" />
-                  主流 NAS 專用硬碟系列特性比較
+              {/* Mixed Drive Guide: Mixing Different Models & SHR Advantage */}
+              <div className="p-4 sm:p-5 bg-purple-950/40 border border-purple-800/60 rounded-xl space-y-3">
+                <div className="font-bold text-base text-purple-300 flex items-center gap-2">
+                  <Server className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                  硬碟可以買不同型號混搭嗎？（防集體暴斃 vs 空間利用）
                 </div>
-                <div className="space-y-3 pt-1">
-                  <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl">
-                    <div className="font-bold text-slate-100 flex items-center justify-between text-sm">
-                      <span>Seagate IronWolf Pro (那嘶狼 Pro) 16TB / 18TB / 20TB</span>
-                      <span className="text-xs text-sky-400 font-mono">7200轉 / 550TB/年 / 5年保+5年原廠Rescue資料救援</span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                      市場主流首選，具備 5 年原廠免費資料救援服務（Rescue Data Recovery），對企業重要資料多一層意外保障。
+                <p className="text-purple-200/90 text-xs sm:text-sm leading-relaxed">
+                  <strong>答案是：完全可以，甚至在進階實務上「同容量跨品牌混搭」是強烈推薦的最佳防禦策略！</strong>
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1 text-slate-200">
+                  <div className="p-3.5 bg-slate-900/80 border border-purple-900/40 rounded-xl space-y-1.5">
+                    <div className="font-bold text-purple-300 text-sm">1. 同容量跨品牌混搭（例如 2x Seagate 18TB + 2x WD 18TB）</div>
+                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      💡 <strong>防止同批次集體陣亡：</strong> 一次買 4 顆同廠牌同出廠批次的硬碟，生命衰退曲線相同。當第 1 顆故障觸發漫長的 RAID 重建讀寫時，同批次其他硬碟極易因高負載接連暴斃。混搭不同品牌或跨店家採購可錯開故障週期，大幅提升陣列安全性！
                     </p>
                   </div>
 
-                  <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl">
-                    <div className="font-bold text-slate-100 flex items-center justify-between text-sm">
-                      <span>Western Digital Red Pro (紅標 Pro) 18TB</span>
-                      <span className="text-xs text-amber-400 font-mono">7200轉 / 512MB 快取 / 550TB/年 / 5年保</span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                      配備超大 512MB 快取與 3D Active Balance Plus 雙面平衡技術，適合高負載多使用者企業存取。
-                    </p>
-                  </div>
-
-                  <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl">
-                    <div className="font-bold text-slate-100 flex items-center justify-between text-sm">
-                      <span>Toshiba N300 14TB / 16TB</span>
-                      <span className="text-xs text-emerald-400 font-mono">7200轉 / 512MB 快取 / 180TB/年 / 3年保</span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                      單 TB 建置成本最低的價格破壞者，若追求每 TB 成本極致划算，Toshiba 14TB/16TB 為首選。
+                  <div className="p-3.5 bg-slate-900/80 border border-purple-900/40 rounded-xl space-y-1.5">
+                    <div className="font-bold text-purple-300 text-sm">2. 不同容量混搭（例如 2x 18TB + 3x 14TB）</div>
+                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      💡 <strong>推薦選用 Synology SHR-1：</strong> 傳統 RAID 5 會受限於最小的 14TB（多出的 8TB 空間會被無情浪費）；而 Synology 獨家 <strong>SHR-1 (智慧陣列)</strong> 則能自動分層重組，將剩餘空間組合成 RAID 1，<strong>達成 60TB 完全零浪費全部可用</strong>！
                     </p>
                   </div>
                 </div>

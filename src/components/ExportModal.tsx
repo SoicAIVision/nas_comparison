@@ -30,20 +30,26 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, evalu
       '每TB建置成本(NTD/TB)',
     ];
 
-    const rows = evaluations.map((e) => [
-      `"${e.config.name}"`,
-      `"${e.nasModel.name} (${e.nasModel.series})"` ,
-      `"${e.config.hddCount}顆 x ${e.hddModel.brand} ${e.hddModel.capacityTb}TB ${e.hddModel.series}"`,
-      `"${e.config.raidType}"`,
-      e.storage.usableTb,
-      e.storage.usableTib,
-      e.storage.meets50TbTarget ? '是' : '否',
-      `"${e.totalRamGb}GB ${e.ramIsEcc ? 'ECC' : 'non-ECC'}"`,
-      e.cost.totalCoolpc ?? '缺貨/無報價',
-      e.cost.totalSinya ?? '缺貨/無報價',
-      e.cost.totalBest,
-      e.cost.costPerUsableTb,
-    ]);
+    const rows = evaluations.map((e) => {
+      const hddDesc = e.isMixedDrives
+        ? e.mixedDriveItems.map((item) => `${item.count}顆 ${item.hddModel.capacityTb}TB ${item.hddModel.brand}`).join(' + ')
+        : `${e.config.hddCount}顆 x ${e.hddModel.brand} ${e.hddModel.capacityTb}TB ${e.hddModel.series}`;
+
+      return [
+        `"${e.config.name}"`,
+        `"${e.nasModel.name} (${e.nasModel.series})"`,
+        `"${hddDesc}"`,
+        `"${e.config.raidType}"`,
+        e.storage.usableTb,
+        e.storage.usableTib,
+        e.storage.meets50TbTarget ? '是' : '否',
+        `"${e.totalRamGb}GB ${e.ramIsEcc ? 'ECC' : 'non-ECC'}"`,
+        e.cost.totalCoolpc ?? '缺貨/無報價',
+        e.cost.totalSinya ?? '缺貨/無報價',
+        e.cost.totalBest,
+        e.cost.costPerUsableTb,
+      ];
+    });
 
     const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     return csvContent;
@@ -69,12 +75,17 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, evalu
     md += `| :--- | :--- | :--- | :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- |\n`;
 
     for (const e of evaluations) {
+      const hddDesc = e.isMixedDrives
+        ? e.mixedDriveItems.map((item) => `${item.count}顆 ${item.hddModel.capacityTb}TB ${item.hddModel.brand}`).join(' + ')
+        : `${e.config.hddCount}顆 x ${e.hddModel.capacityTb}TB ${e.hddModel.brand}`;
+
       const coolpc = e.cost.totalCoolpc ? `NT$ ${e.cost.totalCoolpc.toLocaleString()}` : '-';
       const sinya = e.cost.totalSinya ? `NT$ ${e.cost.totalSinya.toLocaleString()}` : '-';
       const best = `**NT$ ${e.cost.totalBest.toLocaleString()}**`;
       const costPerTb = `NT$ ${e.cost.costPerUsableTb.toLocaleString()}/TB`;
-      const meets = e.storage.meets50TbTarget ? '✅' : '❌';
-      md += `| ${e.config.name} | ${e.nasModel.name} | ${e.config.hddCount}x${e.hddModel.capacityTb}TB | ${e.config.raidType} | ${e.storage.usableTb} TB (${e.storage.usableTib} TiB) | ${meets} | ${e.totalRamGb}GB | ${coolpc} | ${sinya} | ${best} | ${costPerTb} |\n`;
+      const meetsTarget = e.storage.meets50TbTarget ? '✅ 達成' : '⚠️ 未達';
+
+      md += `| ${e.config.name} | ${e.nasModel.name} | ${hddDesc} | ${e.config.raidType} | ${e.storage.usableTb} TB (${e.storage.usableTib} TiB) | ${meetsTarget} | ${e.totalRamGb}GB ${e.ramIsEcc ? 'ECC' : ''} | ${coolpc} | ${sinya} | ${best} | ${costPerTb} |\n`;
     }
 
     return md;

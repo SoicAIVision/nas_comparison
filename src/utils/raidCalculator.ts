@@ -6,14 +6,29 @@ export interface CalculateStorageParams {
   raidType: RaidType;
 }
 
+export interface CalculateMixedStorageParams {
+  diskCapacities: number[];
+  raidType: RaidType;
+}
+
 /**
- * Calculates raw, usable, parity and fault-tolerant storage capacities
- * along with TB to TiB conversion and 50TB procurement target validation.
+ * Calculates storage capacity for uniform disk capacity.
  */
 export function calculateStorageCapacity(params: CalculateStorageParams): StorageCalculationResult {
   const { diskCount, diskCapacityTb, raidType } = params;
+  const diskCapacities = Array(diskCount).fill(diskCapacityTb);
+  return calculateMixedStorageCapacity({ diskCapacities, raidType });
+}
 
-  if (diskCount <= 0 || diskCapacityTb <= 0) {
+/**
+ * Calculates storage capacity for mixed disk capacities, supporting Synology SHR-1 / SHR-2 slicing.
+ */
+export function calculateMixedStorageCapacity(params: CalculateMixedStorageParams): StorageCalculationResult {
+  const { diskCapacities, raidType } = params;
+  const validDisks = diskCapacities.filter((c) => c > 0);
+  const diskCount = validDisks.length;
+
+  if (diskCount === 0) {
     return {
       usableTb: 0,
       usableTib: 0,
@@ -26,32 +41,62 @@ export function calculateStorageCapacity(params: CalculateStorageParams): Storag
     };
   }
 
-  const totalRawTb = diskCount * diskCapacityTb;
+  const totalRawTb = validDisks.reduce((sum, c) => sum + c, 0);
   let usableTb = 0;
   let parityTb = 0;
+  let unallocatedTb = 0;
   let faultToleranceDisks = 0;
 
   switch (raidType) {
-    case 'RAID5':
     case 'SHR1': {
-      if (diskCount < 3 && raidType === 'RAID5') {
-        // RAID 5 requires at least 3 disks
+      if (diskCount === 1) {
+        usableTb = validDisks[0];
+        parityTb = 0;
+        unallocatedTb = 0;
+        faultToleranceDisks = 0;
+      } else {
+        // Synology SHR-1 Slicing Algorithm
+        const sorted = [...validDisks].sort((a, b) => a - b);
+        const uniqueBreakpoints = Array.from(new Set([0, ...sorted])).sort((a, b) => a - b);
+
+        faultToleranceDisks = 1;
+        for (let i = 1; i < uniqueBreakpoints.length; i++) {
+          const prevHeight = uniqueBreakpoints[i - 1];
+          const currHeight = uniqueBreakpoints[i];
+          const sliceHeight = currHeight - prevHeight;
+
+          // Count how many disks have at least currHeight
+          const disksInSlice = sorted.filter((cap) => cap >= currHeight).length;
+
+          if (disksInSlice >= 3) {
+            // RAID 5 slice: (M - 1) * delta
+            usableTb += (disksInSlice - 1) * sliceHeight;
+            parityTb += 1 * sliceHeight;
+          } else if (disksInSlice === 2) {
+            // RAID 1 slice: 1 * delta
+            usableTb += 1 * sliceHeight;
+            parityTb += 1 * sliceHeight;
+          } else if (disksInSlice === 1) {
+            // Unprotected / unusable space
+            unallocatedTb += 1 * sliceHeight;
+          }
+        }
+      }
+      break;
+    }
+
+    case 'RAID5': {
+      if (diskCount < 3) {
         usableTb = 0;
         parityTb = 0;
+        unallocatedTb = totalRawTb;
         faultToleranceDisks = 0;
-      } else if (diskCount === 1) {
-        usableTb = diskCapacityTb;
-        parityTb = 0;
-        faultToleranceDisks = 0;
-      } else if (diskCount === 2) {
-        // SHR1 with 2 disks acts as RAID 1
-        usableTb = diskCapacityTb;
-        parityTb = diskCapacityTb;
-        faultToleranceDisks = 1;
       } else {
-        // Uniform disk size: (N - 1) * Capacity
-        usableTb = (diskCount - 1) * diskCapacityTb;
-        parityTb = diskCapacityTb;
+        // Traditional RAID 5: bottlenecked by smallest disk
+        const minCapacity = Math.min(...validDisks);
+        usableTb = (diskCount - 1) * minCapacity;
+        parityTb = 1 * minCapacity;
+        unallocatedTb = totalRawTb - diskCount * minCapacity;
         faultToleranceDisks = 1;
       }
       break;
@@ -62,10 +107,13 @@ export function calculateStorageCapacity(params: CalculateStorageParams): Storag
       if (diskCount < 4) {
         usableTb = 0;
         parityTb = 0;
+        unallocatedTb = totalRawTb;
         faultToleranceDisks = 0;
       } else {
-        usableTb = (diskCount - 2) * diskCapacityTb;
-        parityTb = 2 * diskCapacityTb;
+        const minCapacity = Math.min(...validDisks);
+        usableTb = (diskCount - 2) * minCapacity;
+        parityTb = 2 * minCapacity;
+        unallocatedTb = totalRawTb - diskCount * minCapacity;
         faultToleranceDisks = 2;
       }
       break;
@@ -75,11 +123,23 @@ export function calculateStorageCapacity(params: CalculateStorageParams): Storag
       if (diskCount < 4 || diskCount % 2 !== 0) {
         usableTb = 0;
         parityTb = 0;
+        unallocatedTb = totalRawTb;
         faultToleranceDisks = 0;
       } else {
-        usableTb = (diskCount / 2) * diskCapacityTb;
-        parityTb = (diskCount / 2) * diskCapacityTb;
-        faultToleranceDisks = 1; // can survive up to 1 disk per mirror pair
+        const sorted = [...validDisks].sort((a, b) => a - b);
+        let pairUsable = 0;
+        let pairWasted = 0;
+        for (let i = 0; i < sorted.length; i += 2) {
+          const d1 = sorted[i];
+          const d2 = sorted[i + 1];
+          const minD = Math.min(d1, d2);
+          pairUsable += minD;
+          pairWasted += Math.abs(d1 - d2);
+        }
+        usableTb = pairUsable;
+        parityTb = pairUsable;
+        unallocatedTb = pairWasted;
+        faultToleranceDisks = 1;
       }
       break;
     }
@@ -88,10 +148,13 @@ export function calculateStorageCapacity(params: CalculateStorageParams): Storag
       if (diskCount < 2) {
         usableTb = 0;
         parityTb = 0;
+        unallocatedTb = totalRawTb;
         faultToleranceDisks = 0;
       } else {
-        usableTb = diskCapacityTb;
-        parityTb = (diskCount - 1) * diskCapacityTb;
+        const minCapacity = Math.min(...validDisks);
+        usableTb = minCapacity;
+        parityTb = (diskCount - 1) * minCapacity;
+        unallocatedTb = totalRawTb - diskCount * minCapacity;
         faultToleranceDisks = diskCount - 1;
       }
       break;
@@ -103,13 +166,13 @@ export function calculateStorageCapacity(params: CalculateStorageParams): Storag
     default: {
       usableTb = totalRawTb;
       parityTb = 0;
+      unallocatedTb = 0;
       faultToleranceDisks = 0;
       break;
     }
   }
 
   // Convert decimal TB (10^12 bytes) to binary TiB (2^40 bytes)
-  // Factor: 10^12 / 2^40 = 1,000,000,000,000 / 1,099,511,627,776 ≈ 0.90949470177
   const TB_TO_TIB = Math.pow(10, 12) / Math.pow(2, 40);
   const usableTib = Math.round(usableTb * TB_TO_TIB * 100) / 100;
   const storageEfficiencyPercent = totalRawTb > 0 ? Math.round((usableTb / totalRawTb) * 100) : 0;
@@ -119,7 +182,7 @@ export function calculateStorageCapacity(params: CalculateStorageParams): Storag
     usableTb,
     usableTib,
     parityTb,
-    unallocatedTb: 0,
+    unallocatedTb,
     faultToleranceDisks,
     meets50TbTarget,
     totalRawTb,
