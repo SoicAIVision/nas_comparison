@@ -15,17 +15,18 @@ import {
   Zap,
   CheckCircle2,
   Tag,
+  HelpCircle,
 } from 'lucide-react';
 
 interface PlanCardProps {
   evaluation: CompletePlanEvaluation;
-  onOpenRamAdvice: () => void;
+  onOpenHardwareGuide: (tab: 'nas' | 'hdd' | 'ram' | 'addons') => void;
   onOpenPriceOverride: (itemId: string, itemName: string, currentPrice: number) => void;
 }
 
 export const PlanCard: React.FC<PlanCardProps> = ({
   evaluation,
-  onOpenRamAdvice,
+  onOpenHardwareGuide,
   onOpenPriceOverride,
 }) => {
   const { updatePlan, duplicatePlan, removePlan, plans } = useComparisonStore();
@@ -67,30 +68,30 @@ export const PlanCard: React.FC<PlanCardProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 hover:border-slate-700/80 rounded-2xl p-5 shadow-xl transition-all flex flex-col justify-between relative overflow-hidden">
+    <div className="bg-slate-900 border border-slate-800 hover:border-slate-700/90 rounded-2xl p-5 shadow-xl transition-all flex flex-col justify-between relative overflow-hidden">
       {/* Top Banner & Header */}
       <div>
-        <div className="flex items-start justify-between gap-3 mb-4">
-          <div className="flex-1">
+        <div className="flex items-start justify-between gap-2.5 mb-4">
+          <div className="flex-1 min-w-0">
             <input
               type="text"
               value={config.name}
               onChange={(e) => updatePlan(config.id, { name: e.target.value })}
-              className="w-full bg-transparent font-bold text-base text-slate-100 border-b border-transparent hover:border-slate-700 focus:border-sky-500 focus:outline-none px-1 py-0.5 rounded transition"
-              title="點擊可自訂方案名稱"
+              className="w-full bg-transparent font-bold text-base text-slate-100 border-b border-transparent hover:border-slate-700 focus:border-sky-500 focus:outline-none px-1 py-0.5 rounded transition truncate"
+              title="點擊可直接修改方案名稱"
             />
             <div className="flex items-center gap-2 mt-1 px-1">
-              <span className="text-xs font-semibold text-sky-400 bg-sky-950/60 border border-sky-800/60 px-2 py-0.5 rounded-md">
+              <span className="text-xs font-semibold text-sky-400 bg-sky-950/60 border border-sky-800/60 px-2 py-0.5 rounded-md flex-shrink-0">
                 {nasModel.name}
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-400 truncate">
                 {config.hddCount} 顆 × {hddModel.capacityTb}TB ({config.raidType})
               </span>
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-shrink-0">
             <button
               onClick={() => duplicatePlan(config.id)}
               className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition"
@@ -123,15 +124,24 @@ export const PlanCard: React.FC<PlanCardProps> = ({
         )}
 
         {/* Form Controls */}
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           {/* 1. NAS Model Selector */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-300 mb-1">
               <span className="flex items-center gap-1.5">
                 <Server className="w-3.5 h-3.5 text-sky-400" />
                 NAS 主機型號
+                <button
+                  type="button"
+                  onClick={() => onOpenHardwareGuide('nas')}
+                  className="text-slate-400 hover:text-sky-300"
+                  title="查看各機型特色與選購差異"
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                </button>
               </span>
               <button
+                type="button"
                 onClick={() =>
                   onOpenPriceOverride(
                     nasModel.id,
@@ -139,13 +149,13 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                     nasModel.pricing.bestPrice || nasModel.msrp
                   )
                 }
-                className="text-[10px] text-slate-400 hover:text-sky-400 flex items-center gap-0.5"
+                className="text-[11px] text-slate-400 hover:text-sky-400 flex items-center gap-0.5 font-normal"
                 title="自訂/覆寫此機型價格"
               >
                 <Tag className="w-3 h-3" />
                 自訂底價
               </button>
-            </label>
+            </div>
             <select
               value={config.nasModelId}
               onChange={handleNasChange}
@@ -161,12 +171,21 @@ export const PlanCard: React.FC<PlanCardProps> = ({
 
           {/* 2. Hard Drive Selector */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-300 mb-1">
               <span className="flex items-center gap-1.5">
                 <HddIcon className="w-3.5 h-3.5 text-sky-400" />
                 搭配硬碟型號
+                <button
+                  type="button"
+                  onClick={() => onOpenHardwareGuide('hdd')}
+                  className="text-slate-400 hover:text-sky-300"
+                  title="查看硬碟品牌、轉速與保固指南"
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                </button>
               </span>
               <button
+                type="button"
                 onClick={() =>
                   onOpenPriceOverride(
                     hddModel.id,
@@ -174,13 +193,13 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                     hddModel.pricing.bestPrice || 10000
                   )
                 }
-                className="text-[10px] text-slate-400 hover:text-sky-400 flex items-center gap-0.5"
+                className="text-[11px] text-slate-400 hover:text-sky-400 flex items-center gap-0.5 font-normal"
                 title="自訂/覆寫此硬碟單價"
               >
                 <Tag className="w-3 h-3" />
                 自訂單價
               </button>
-            </label>
+            </div>
             <select
               value={config.hddModelId}
               onChange={handleHddChange}
@@ -204,7 +223,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             </div>
 
             {/* Visual Bay Slots */}
-            <div className="grid grid-cols-8 gap-1.5 mb-2">
+            <div className="grid grid-cols-8 gap-1.5 mb-1.5">
               {Array.from({ length: nasModel.bays }).map((_, idx) => {
                 const isOccupied = idx < config.hddCount;
                 return (
@@ -228,10 +247,10 @@ export const PlanCard: React.FC<PlanCardProps> = ({
 
           {/* 4. RAID Mode Selector */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-300 mb-1">
               <span>RAID 磁碟陣列模式</span>
-              <span className="text-[11px] text-slate-400">預設建議：RAID 5</span>
-            </label>
+              <span className="text-[11px] text-slate-400 font-normal">預設建議：RAID 5</span>
+            </div>
             <select
               value={config.raidType}
               onChange={handleRaidChange}
@@ -248,25 +267,26 @@ export const PlanCard: React.FC<PlanCardProps> = ({
 
           {/* 5. RAM Expansion */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-300 mb-1">
               <span className="flex items-center gap-1.5">
                 <Cpu className="w-3.5 h-3.5 text-sky-400" />
                 記憶體 (RAM) 配置
               </span>
               <button
-                onClick={onOpenRamAdvice}
-                className="text-[10px] text-sky-400 hover:text-sky-300 underline font-normal"
+                type="button"
+                onClick={() => onOpenHardwareGuide('ram')}
+                className="text-[11px] text-sky-400 hover:text-sky-300 underline font-normal"
               >
-                RAM 影響建議？
+                RAM 影響與 ECC？
               </button>
-            </label>
+            </div>
             <select
               value={config.selectedRamId || 'none'}
               onChange={handleRamChange}
               className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-sky-500 transition"
             >
               <option value="none">
-                標配 {nasModel.defaultRamGb}GB {nasModel.defaultRamType} (日常/備份/照片索引足夠) - NT$ 0
+                標配 {nasModel.defaultRamGb}GB {nasModel.defaultRamType} (日常/備份/照片足夠) - NT$ 0
               </option>
               {RAM_MODULES.map((ram) => (
                 <option key={ram.id} value={ram.id}>
@@ -278,10 +298,19 @@ export const PlanCard: React.FC<PlanCardProps> = ({
 
           {/* 6. Optional Add-ons */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-sky-400" />
-              擴充配件 (網卡 / 快取)
-            </label>
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-300 mb-1">
+              <span className="flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-sky-400" />
+                擴充配件 (網卡 / 快取)
+              </span>
+              <button
+                type="button"
+                onClick={() => onOpenHardwareGuide('addons')}
+                className="text-[11px] text-sky-400 hover:text-sky-300 underline font-normal"
+              >
+                10G 與快取用途？
+              </button>
+            </div>
             <div className="space-y-1.5">
               {ADDON_ACCESSORIES.map((addon) => {
                 const isSelected = config.selectedAddonIds.includes(addon.id);
@@ -294,16 +323,16 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                         : 'bg-slate-800/60 border-slate-700/60 text-slate-400 hover:border-slate-600'
                     }`}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 min-w-0 pr-2">
                       <input
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => handleToggleAddon(addon.id)}
                         className="rounded border-slate-700 text-sky-500 focus:ring-0"
                       />
-                      <span className="font-medium text-slate-200">{addon.name}</span>
+                      <span className="font-medium text-slate-200 truncate">{addon.name}</span>
                     </div>
-                    <span className="font-mono text-slate-300">
+                    <span className="font-mono text-slate-300 flex-shrink-0">
                       +NT$ {addon.pricing.bestPrice?.toLocaleString()}
                     </span>
                   </label>
@@ -332,7 +361,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             )}
             <div>
               <div className="font-bold text-xs">
-                {storage.meets50TbTarget ? '🎉 達成 $\\ge$ 50TB 採購目標' : '⚠️ 未達 50TB 採購目標'}
+                {storage.meets50TbTarget ? '🎉 達成 ≥ 50TB 採購目標' : '⚠️ 未達 50TB 採購目標'}
               </div>
               <div className="text-[11px] opacity-80">
                 真實可用：{storage.usableTb} TB ({storage.usableTib} TiB)

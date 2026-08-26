@@ -4,14 +4,20 @@ import { Navbar } from './components/Navbar';
 import { PlanCard } from './components/PlanCard';
 import { ComparisonMatrix } from './components/ComparisonMatrix';
 import { VisualCharts } from './components/VisualCharts';
-import { RAMAdviceModal } from './components/RAMAdviceModal';
+import { HardwareGuideModal } from './components/HardwareGuideModal';
 import { ExportModal } from './components/ExportModal';
 import { PriceOverrideModal } from './components/PriceOverrideModal';
-import { Plus, Sliders, ShieldCheck, Sparkles, ExternalLink } from 'lucide-react';
+import { Plus, Sliders, ShieldCheck, Sparkles, ExternalLink, BookOpen } from 'lucide-react';
 
 export const App: React.FC = () => {
   const { init, getEvaluatedPlans, addPlan } = useComparisonStore();
-  const [isRamModalOpen, setIsRamModalOpen] = useState(false);
+  const [guideModalConfig, setGuideModalConfig] = useState<{
+    isOpen: boolean;
+    tab: 'nas' | 'hdd' | 'ram' | 'addons';
+  }>({
+    isOpen: false,
+    tab: 'nas',
+  });
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [overrideTarget, setOverrideTarget] = useState<{
     itemId: string;
@@ -25,28 +31,32 @@ export const App: React.FC = () => {
 
   const evaluations = getEvaluatedPlans();
 
+  const handleOpenGuide = (tab: 'nas' | 'hdd' | 'ram' | 'addons' = 'nas') => {
+    setGuideModalConfig({ isOpen: true, tab });
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-sky-500 selection:text-white">
       {/* Top Navbar */}
       <Navbar
         onOpenExport={() => setIsExportModalOpen(true)}
-        onOpenRamAdvice={() => setIsRamModalOpen(true)}
+        onOpenHardwareGuide={() => handleOpenGuide('nas')}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      {/* Main Content Area - Full width with comfortable side margins */}
+      <main className="flex-1 max-w-[98%] 2xl:max-w-[1850px] w-full mx-auto px-3 sm:px-5 lg:px-6 py-5 space-y-7">
         {/* Intro / Mission Banner */}
-        <div className="bg-gradient-to-r from-sky-950/70 via-slate-900/80 to-slate-900/80 border border-sky-900/50 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
-          <div className="max-w-3xl space-y-2">
+        <div className="bg-gradient-to-r from-sky-950/80 via-slate-900/90 to-slate-900/90 border border-sky-900/60 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+          <div className="max-w-4xl space-y-2">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-lg text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5" />
               企業/團隊 NAS 採購決策指南
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              Synology 8-Bay 旗艦（DS1825+ / neo+）與 $\ge$ 50TB 方案配置評估
+              Synology 8-Bay 旗艦（DS1825+ / neo+）與 ≥ 50TB 方案配置評估
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              透過即時抓取<strong>原價屋 (CoolPC)</strong> 與 <strong>欣亞數位 (Sinya)</strong> 價格，自動試算 RAID 5 / SHR 可用儲存容量（TB/TiB）、單 TB 建置成本與最佳混搭採購預算。
+              透過即時抓取 <strong>原價屋 (CoolPC)</strong> 與 <strong>欣亞數位 (Sinya)</strong> 價格，自動試算 RAID 5 / SHR 可用儲存容量（TB/TiB）、單 TB 建置成本與最佳混搭採購預算。
             </p>
           </div>
 
@@ -57,6 +67,14 @@ export const App: React.FC = () => {
             </div>
             <span>•</span>
             <div>目標有效容量：<strong className="text-slate-200">50 TB (約 45.5 TiB) 以上</strong></div>
+            <span>•</span>
+            <button
+              onClick={() => handleOpenGuide('nas')}
+              className="text-amber-400 hover:text-amber-300 inline-flex items-center gap-1 font-medium transition"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              完整硬體選配與採購指南
+            </button>
             <span>•</span>
             <a
               href="https://www.synology.com/zh-tw/products/DS1825+?lang=zh-tw#features"
@@ -69,7 +87,7 @@ export const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Plan Cards Grid */}
+        {/* Plan Cards Grid - 3 Columns for optimal readability */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -85,12 +103,12 @@ export const App: React.FC = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {evaluations.map((evaluation) => (
               <PlanCard
                 key={evaluation.config.id}
                 evaluation={evaluation}
-                onOpenRamAdvice={() => setIsRamModalOpen(true)}
+                onOpenHardwareGuide={handleOpenGuide}
                 onOpenPriceOverride={(itemId, itemName, defaultPrice) =>
                   setOverrideTarget({ itemId, itemName, defaultPrice })
                 }
@@ -112,7 +130,7 @@ export const App: React.FC = () => {
 
       {/* Footer */}
       <footer className="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="max-w-[98%] 2xl:max-w-[1850px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>NAS 視覺化與即時比價系統 • 支援 GitHub Pages 靜態部署與 URL Hash 狀態分享</div>
           <div className="flex items-center gap-3 text-[11px]">
             <a href="https://www.coolpc.com.tw/tw/" target="_blank" rel="noreferrer" className="hover:text-slate-400 transition">原價屋</a>
@@ -125,9 +143,10 @@ export const App: React.FC = () => {
       </footer>
 
       {/* Modals */}
-      <RAMAdviceModal
-        isOpen={isRamModalOpen}
-        onClose={() => setIsRamModalOpen(false)}
+      <HardwareGuideModal
+        isOpen={guideModalConfig.isOpen}
+        defaultTab={guideModalConfig.tab}
+        onClose={() => setGuideModalConfig((prev) => ({ ...prev, isOpen: false }))}
       />
 
       <ExportModal

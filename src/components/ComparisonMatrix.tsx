@@ -43,12 +43,12 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ evaluations 
                     <div className="flex items-center justify-between gap-1">
                       <span>{evalItem.config.name}</span>
                       {isBestPrice && (
-                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded flex-shrink-0">
                           總價最省
                         </span>
                       )}
                       {isBestValue && !isBestPrice && (
-                        <span className="text-[10px] bg-sky-500/20 text-sky-300 border border-sky-500/30 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] bg-sky-500/20 text-sky-300 border border-sky-500/30 px-1.5 py-0.5 rounded flex-shrink-0">
                           單 TB 最划算
                         </span>
                       )}
@@ -147,7 +147,7 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ evaluations 
                       {e.storage.meets50TbTarget ? (
                         <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
                           <ShieldCheck className="w-3 h-3" />
-                          已達成 $\ge$ 50TB 採購目標
+                          已達成 ≥ 50TB 採購目標
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 font-medium">

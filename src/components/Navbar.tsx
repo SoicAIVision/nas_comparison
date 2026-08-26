@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useComparisonStore } from '../store/useComparisonStore';
 import { extractLatestTimestamps } from '../services/priceMatcher';
-import { RefreshCw, Share2, Plus, RotateCcw, FileSpreadsheet, HardDrive, Info, Check } from 'lucide-react';
+import { RefreshCw, Share2, Plus, RotateCcw, FileSpreadsheet, HardDrive, BookOpen, Check } from 'lucide-react';
 
 interface NavbarProps {
   onOpenExport: () => void;
-  onOpenRamAdvice: () => void;
+  onOpenHardwareGuide: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenRamAdvice }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenHardwareGuide }) => {
   const { priceDb, isRefreshing, refreshStatus, refreshPrices, addPlan, resetToDefaults } = useComparisonStore();
   const [copied, setCopied] = useState(false);
   const [showTimestampTooltip, setShowTimestampTooltip] = useState(false);
@@ -35,31 +35,31 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenRamAdvice })
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3.5 shadow-lg">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+    <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3 shadow-lg">
+      <div className="max-w-[98%] 2xl:max-w-[1850px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Logo & Title */}
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-gradient-to-br from-sky-500 to-blue-700 rounded-xl shadow-md shadow-sky-500/20 text-white flex items-center justify-center">
+          <div className="p-2.5 bg-gradient-to-br from-sky-500 to-blue-700 rounded-xl shadow-md shadow-sky-500/20 text-white flex items-center justify-center flex-shrink-0">
             <HardDrive className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2.5">
               <h1 className="text-lg font-bold text-white tracking-tight">NAS 視覺化與即時比價系統</h1>
               <span className="px-2 py-0.5 text-xs font-semibold bg-sky-500/20 text-sky-400 rounded-full border border-sky-500/30">
                 Synology DS1825+ 專題
               </span>
             </div>
-            <p className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
-              <span>目標容量 $\ge$ 50TB</span>
+            <p className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+              <span>目標容量 ≥ 50TB</span>
               <span>•</span>
               <span>預設 RAID 5</span>
               <span>•</span>
               <button
-                onClick={onOpenRamAdvice}
-                className="text-sky-400 hover:text-sky-300 underline font-medium inline-flex items-center gap-0.5"
+                onClick={onOpenHardwareGuide}
+                className="text-sky-400 hover:text-sky-300 font-medium inline-flex items-center gap-1 hover:underline"
               >
-                <Info className="w-3 h-3" />
-                RAM 影響與選配指南
+                <BookOpen className="w-3.5 h-3.5" />
+                硬體配件與選購指南
               </button>
             </p>
           </div>
@@ -96,7 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenRamAdvice })
                   <span className="text-slate-200 font-mono">{timestamps.sinyaFormatted}</span>
                 </div>
                 <p className="text-[11px] text-slate-400 pt-1 leading-relaxed">
-                  點擊右側「🔄 重新整理」按鈕可發送即時請求同步兩大電商最新報價。
+                  點擊右側「重新整理報價」按鈕可發送即時請求同步兩大電商最新報價。
                 </p>
               </div>
             )}
@@ -121,6 +121,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenExport, onOpenRamAdvice })
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Share2 className="w-3.5 h-3.5" />}
             <span>{copied ? '已複製分享連結！' : '複製分享連結'}</span>
+          </button>
+
+          {/* Guide Modal Button */}
+          <button
+            onClick={onOpenHardwareGuide}
+            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-medium flex items-center gap-1.5 transition"
+            title="查看主機、硬碟、RAM 與配件選購指南"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+            <span>選購指南</span>
           </button>
 
           {/* Export CSV / Report */}

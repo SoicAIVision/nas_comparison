@@ -19,23 +19,38 @@ interface VisualChartsProps {
 export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
   if (evaluations.length === 0) return null;
 
-  // Prepare data for Stacked Price Breakdown Chart
-  const priceChartData = evaluations.map((e) => ({
-    name: e.config.name,
-    主機成本: e.cost.nasCost.best,
-    硬碟成本: e.cost.hddCost.best,
-    記憶體成本: e.cost.ramCost.best,
-    配件成本: e.cost.addonsCost.best,
-    總價: e.cost.totalBest,
-    每TB成本: e.cost.costPerUsableTb,
-  }));
+  // Prepare simplified data for Stacked Price Breakdown Chart with clean concise names
+  const priceChartData = evaluations.map((e, idx) => {
+    // Generate clean concise display name, e.g. "方案 A (4x18TB)"
+    const shortName = e.config.name.includes('：')
+      ? e.config.name.split('：')[0] + ` (${e.config.hddCount}x${e.hddModel.capacityTb}TB)`
+      : `方案 ${String.fromCharCode(65 + idx)} (${e.config.hddCount}x${e.hddModel.capacityTb}TB)`;
+
+    return {
+      name: shortName,
+      fullName: e.config.name,
+      主機成本: e.cost.nasCost.best,
+      硬碟成本: e.cost.hddCost.best,
+      記憶體成本: e.cost.ramCost.best,
+      配件成本: e.cost.addonsCost.best,
+      總價: e.cost.totalBest,
+      每TB成本: e.cost.costPerUsableTb,
+    };
+  });
 
   // Prepare data for Capacity & Cost efficiency
-  const capacityChartData = evaluations.map((e) => ({
-    name: e.config.name,
-    有效可用容量TB: e.storage.usableTb,
-    每TB建置成本NT: e.cost.costPerUsableTb,
-  }));
+  const capacityChartData = evaluations.map((e, idx) => {
+    const shortName = e.config.name.includes('：')
+      ? e.config.name.split('：')[0] + ` (${e.config.hddCount}x${e.hddModel.capacityTb}TB)`
+      : `方案 ${String.fromCharCode(65 + idx)} (${e.config.hddCount}x${e.hddModel.capacityTb}TB)`;
+
+    return {
+      name: shortName,
+      fullName: e.config.name,
+      有效可用容量: e.storage.usableTb,
+      每TB建置成本: e.cost.costPerUsableTb,
+    };
+  });
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -46,26 +61,24 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
             <BarChart3 className="w-4 h-4 text-sky-400" />
             各方案價格結構拆解 (Stacked Cost Breakdown)
           </h3>
-          <p className="text-xs text-slate-400 mb-4">
+          <p className="text-xs text-slate-400 mb-3">
             拆解「NAS 主機 vs 硬碟群 vs 記憶體/擴充配件」支出比重
           </p>
         </div>
 
-        <div className="h-72 w-full">
+        <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={priceChartData}
-              margin={{ top: 10, right: 10, left: 10, bottom: 25 }}
+              margin={{ top: 10, right: 15, left: 10, bottom: 20 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.5} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.4} />
               <XAxis
                 dataKey="name"
                 stroke="#94a3b8"
                 fontSize={11}
                 tickLine={false}
                 interval={0}
-                angle={-15}
-                textAnchor="end"
               />
               <YAxis
                 stroke="#94a3b8"
@@ -77,6 +90,12 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
                   `NT$ ${value.toLocaleString()}`,
                   name,
                 ]}
+                labelFormatter={(label, payload) => {
+                  if (payload && payload[0] && payload[0].payload) {
+                    return payload[0].payload.fullName || label;
+                  }
+                  return label;
+                }}
                 contentStyle={{
                   backgroundColor: '#0f172a',
                   borderColor: '#334155',
@@ -86,11 +105,13 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
                 }}
               />
               <Legend
-                wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                verticalAlign="top"
+                align="right"
+                wrapperStyle={{ paddingBottom: '16px', fontSize: '11px' }}
               />
-              <Bar dataKey="主機成本" stackId="a" fill="#0284c7" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="硬碟成本" stackId="a" fill="#10b981" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="記憶體成本" stackId="a" fill="#f59e0b" radius={[0, 0, 0, 0]} />
+              <Bar dataKey="主機成本" stackId="a" fill="#0284c7" />
+              <Bar dataKey="硬碟成本" stackId="a" fill="#10b981" />
+              <Bar dataKey="記憶體成本" stackId="a" fill="#f59e0b" />
               <Bar dataKey="配件成本" stackId="a" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -104,26 +125,24 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
             <BarChart3 className="w-4 h-4 text-emerald-400" />
             有效儲存容量 (TB) 與單 TB 建置成本 (NT$/TB)
           </h3>
-          <p className="text-xs text-slate-400 mb-4">
-            綠色為有效可用空間（需 $\ge$ 50TB），橘色為每 TB 採購成本（越低越划算）
+          <p className="text-xs text-slate-400 mb-3">
+            綠色為有效可用空間（需 ≥ 50TB），橘色為每 TB 採購成本（越低越划算）
           </p>
         </div>
 
-        <div className="h-72 w-full">
+        <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={capacityChartData}
-              margin={{ top: 10, right: 10, left: 10, bottom: 25 }}
+              margin={{ top: 10, right: 15, left: 10, bottom: 20 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.5} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.4} />
               <XAxis
                 dataKey="name"
                 stroke="#94a3b8"
                 fontSize={11}
                 tickLine={false}
                 interval={0}
-                angle={-15}
-                textAnchor="end"
               />
               <YAxis
                 yAxisId="left"
@@ -144,6 +163,12 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
                   name.includes('容量') ? `${value} TB` : `NT$ ${value.toLocaleString()} / TB`,
                   name,
                 ]}
+                labelFormatter={(label, payload) => {
+                  if (payload && payload[0] && payload[0].payload) {
+                    return payload[0].payload.fullName || label;
+                  }
+                  return label;
+                }}
                 contentStyle={{
                   backgroundColor: '#0f172a',
                   borderColor: '#334155',
@@ -153,10 +178,12 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
                 }}
               />
               <Legend
-                wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                verticalAlign="top"
+                align="right"
+                wrapperStyle={{ paddingBottom: '16px', fontSize: '11px' }}
               />
-              <Bar yAxisId="left" dataKey="有效可用容量TB" fill="#10b981" radius={[4, 4, 0, 0]} />
-              <Bar yAxisId="right" dataKey="每TB建置成本NT" fill="#f97316" radius={[4, 4, 0, 0]} />
+              <Bar yAxisId="left" dataKey="有效可用容量" fill="#10b981" radius={[4, 4, 0, 0]} name="有效可用容量 (TB)" />
+              <Bar yAxisId="right" dataKey="每TB建置成本" fill="#f97316" radius={[4, 4, 0, 0]} name="每TB建置成本 (NT$)" />
             </BarChart>
           </ResponsiveContainer>
         </div>
