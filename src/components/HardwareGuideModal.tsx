@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Server, HardDrive, Cpu, Info, AlertOctagon, CheckCircle2, ArrowRight, Layers, Network } from 'lucide-react';
+import { X, Server, HardDrive, Cpu, Zap, Info, AlertOctagon, CheckCircle2, ArrowRight, Layers, Network } from 'lucide-react';
 
 interface HardwareGuideModalProps {
   isOpen: boolean;
@@ -385,31 +385,145 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
           {/* TAB 5: 10GbE & Networking */}
           {activeTab === 'addons' && (
             <div className="space-y-4">
+              {/* Core Practical Function of 10G Upgrade Module */}
+              <div className="p-4 sm:p-5 bg-sky-950/40 border border-sky-800/60 rounded-xl space-y-3">
+                <div className="font-bold text-base text-sky-300 flex items-center gap-2">
+                  <Network className="w-5 h-5 text-sky-400 flex-shrink-0" />
+                  10GbE 網路升級模組 (E10G22-T1-Mini / E10G18-T1) 的「實際作用」是什麼？
+                </div>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  許多同事會問：「NAS 已經有內建網路線插孔，為什麼還要額外買 <strong>10GbE 升級模組</strong>？它究竟能帶來什麼改變？」
+                </p>
+
+                {/* Speed & Time Comparison Table */}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left border-collapse bg-slate-900/90 rounded-xl overflow-hidden border border-slate-800">
+                    <thead>
+                      <tr className="bg-slate-800/80 text-slate-200 border-b border-slate-700">
+                        <th className="py-2.5 px-3">網路介面規格</th>
+                        <th className="py-2.5 px-3">實測傳輸頻寬</th>
+                        <th className="py-2.5 px-3">傳輸 1TB 大檔案所需時間</th>
+                        <th className="py-2.5 px-3">適用場景與效能瓶頸</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800 text-slate-300">
+                      <tr>
+                        <td className="py-2.5 px-3 font-semibold text-slate-400">標準 1GbE (千兆)</td>
+                        <td className="py-2.5 px-3 font-mono">約 110 MB/s</td>
+                        <td className="py-2.5 px-3 font-mono text-amber-400">約 2.5 ~ 3 小時</td>
+                        <td className="py-2.5 px-3 text-slate-400">文書處理、小檔備份，傳輸大檔嚴重卡頓</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-semibold text-sky-400">原生 2.5GbE (DS1825+)</td>
+                        <td className="py-2.5 px-3 font-mono">約 280 MB/s</td>
+                        <td className="py-2.5 px-3 font-mono text-sky-300">約 1 小時</td>
+                        <td className="py-2.5 px-3 text-slate-400">一般團隊日常共用、中型檔案備份</td>
+                      </tr>
+                      <tr className="bg-emerald-950/30 text-emerald-200 font-medium">
+                        <td className="py-2.5 px-3 font-bold text-emerald-400 flex items-center gap-1">
+                          <Zap className="w-3.5 h-3.5" />
+                          加裝 10GbE 升級模組
+                        </td>
+                        <td className="py-2.5 px-3 font-mono font-bold text-emerald-300">高達 1,150 MB/s</td>
+                        <td className="py-2.5 px-3 font-mono font-extrabold text-emerald-400">僅需約 15 分鐘！</td>
+                        <td className="py-2.5 px-3 font-bold text-emerald-300">4K 影片即時剪輯、巨量資料急速備份</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* 4 Key Real-world Capabilities */}
+                <div className="pt-2">
+                  <div className="font-bold text-xs sm:text-sm text-amber-300 mb-2">
+                    💡 升級 10GbE 後的 4 大實際應用效益：
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm">
+                    <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg space-y-1">
+                      <div className="font-bold text-slate-100 flex items-center gap-1.5">
+                        <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
+                        1. 4K / 8K 影片即時線上剪輯 (Direct In-Place Editing)
+                      </div>
+                      <p className="text-slate-400 text-xs leading-relaxed">
+                        剪輯師可直接透過 10G 區域網路掛載 NAS 磁碟，在 Final Cut Pro / Premiere / DaVinci Resolve 中進行多軌 4K ProRes 即時剪輯，<strong>完全無需花費數小時將數百 GB 素材先下載到電腦本機</strong>。
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg space-y-1">
+                      <div className="font-bold text-slate-100 flex items-center gap-1.5">
+                        <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
+                        2. 團隊數十人高速併發存取不塞車
+                      </div>
+                      <p className="text-slate-400 text-xs leading-relaxed">
+                        在傳統 1GbE 下，只要有一位同事在備份大檔，全公司連線就會卡死。10GbE 擁有 10 倍以上水管寬度，支援多位團隊成員同時高速上傳與下載大型專案檔。
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg space-y-1">
+                      <div className="font-bold text-slate-100 flex items-center gap-1.5">
+                        <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
+                        3. 巨量資料庫與 VM 虛擬化 (iSCSI / NFS)
+                      </div>
+                      <p className="text-slate-400 text-xs leading-relaxed">
+                        可做為 VMware ESXi、Proxmox VE 或 Windows Hyper-V 伺服器的高速網路儲存後端，提供接近本機 NVMe SSD 的極致吞吐與超低存取延遲。
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg space-y-1">
+                      <div className="font-bold text-slate-100 flex items-center gap-1.5">
+                        <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
+                        4. 縮短 80% 以上的排程備份時間
+                      </div>
+                      <p className="text-slate-400 text-xs leading-relaxed">
+                        每日凌晨執行的全機備份 (Active Backup for Business) 與異地快照同步 (Snapshot Replication)，傳輸時間由數小時大幅縮短至十餘分鐘內完成。
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3 Solutions Compared */}
               <div className="p-4 sm:p-5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-3">
                 <div className="font-bold text-base text-sky-400 flex items-center gap-2">
                   <Network className="w-5 h-5" />
-                  10GbE 網路速度提升與機種選購建議
+                  3 種 10GbE 實現方式與機種搭配指南
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
-                  <div className="p-3.5 bg-slate-900 border border-emerald-800/70 rounded-xl space-y-2">
-                    <div className="font-bold text-emerald-300 flex items-center justify-between text-sm">
-                      <span>方案 1：選用 DS1823xs+ (原生標配 10GbE)</span>
-                      <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-semibold">
-                        最省事首選
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+                  {/* Solution 1: DS1823xs+ */}
+                  <div className="p-3 bg-slate-900 border border-emerald-800/70 rounded-xl space-y-1.5">
+                    <div className="font-bold text-emerald-300 text-xs sm:text-sm flex items-center justify-between">
+                      <span>DS1823xs+ (原生內建)</span>
+                      <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-bold">
+                        免買網卡
                       </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      DS1823xs+ <strong>出廠即內建 1 x 10GbE RJ-45 高速埠</strong>，完全無需額外加購任何網卡，直接插上 10G Switch 或電腦 10G 網卡即可享有 <strong>1,000+ MB/s</strong> 極速傳輸，且享原廠 5 年頂級保固。
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      出廠即標配 <strong>1 x 10GbE RJ-45 實體埠</strong>，完全不需額外加購任何模組，直接插線享有 1,000+ MB/s 傳輸。
                     </p>
                   </div>
 
-                  <div className="p-3.5 bg-slate-900 border border-slate-700 rounded-xl space-y-2">
-                    <div className="font-bold text-slate-100 flex items-center justify-between text-sm">
-                      <span>方案 2：DS1825+ 透過 PCIe 加裝 E10G18-T1</span>
-                      <span className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">彈性擴充</span>
+                  {/* Solution 2: DS1825+ PCIe */}
+                  <div className="p-3 bg-slate-900 border border-slate-700 rounded-xl space-y-1.5">
+                    <div className="font-bold text-slate-100 text-xs sm:text-sm flex items-center justify-between">
+                      <span>E10G18-T1 (PCIe 網卡)</span>
+                      <span className="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded">
+                        DS1825+ 專用
+                      </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      DS1825+ 原生標配雙 2.5GbE（傳輸約 280 MB/s）。若後續需要 10G 傳輸，可隨時購買 Synology E10G18-T1 擴充卡 (約 NT$ 4,499) 插入 PCIe Gen3 x8 插槽升級。
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      採用標準 PCIe Gen3 x8 插槽，為 DS1825+ / DS1825neo+ 擴充 10G RJ-45 傳輸埠 (約 NT$ 4,499)。
+                    </p>
+                  </div>
+
+                  {/* Solution 3: E10G22-T1-Mini */}
+                  <div className="p-3 bg-slate-900 border border-slate-700 rounded-xl space-y-1.5">
+                    <div className="font-bold text-slate-100 text-xs sm:text-sm flex items-center justify-between">
+                      <span>E10G22-T1-Mini (升級模組)</span>
+                      <span className="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded">
+                        專用 Mini 槽
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      專為具備 Network Upgrade Slot 機型（DS923+ / DS1522+ / DS1525+）設計的專用免拆機迷你 10G 模組 (約 NT$ 3,790)。
                     </p>
                   </div>
                 </div>

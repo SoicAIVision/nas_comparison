@@ -634,7 +634,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                 10G 與擴充用途？
               </button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {ADDON_ACCESSORIES.map((addon) => {
                 const isSelected = config.selectedAddonIds.includes(addon.id);
                 const info = getDualStorePricingInfo(addon.pricing);
@@ -643,36 +643,43 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                 return (
                   <label
                     key={addon.id}
-                    className={`flex items-center justify-between p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+                    className={`block p-3 rounded-xl border text-xs cursor-pointer transition ${
                       isSelected
-                        ? 'bg-sky-950/40 border-sky-600/80 text-sky-200'
+                        ? 'bg-sky-950/50 border-sky-600/90 text-sky-100 shadow-sm'
                         : 'bg-slate-800/60 border-slate-700/60 text-slate-400 hover:border-slate-600'
                     }`}
                   >
-                    <div className="flex items-center gap-2 min-w-0 pr-2">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => handleToggleAddon(addon.id)}
-                        className="rounded border-slate-700 text-sky-500 focus:ring-0 cursor-pointer"
-                      />
-                      <div>
-                        <div className="font-medium text-slate-200 truncate text-xs flex items-center gap-1.5">
-                          {addon.name}
-                          {isNic10g && hasBuiltIn10G && (
-                            <span className="text-[10px] font-bold text-amber-400 bg-amber-950/80 border border-amber-800 px-1.5 py-0.2 rounded">
-                              本機已內建10G (免加購)
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[11px] text-slate-400">
-                          原: {info.coolpcPrice ? `NT$ ${info.coolpcPrice.toLocaleString()}` : '無'} | 欣: {info.sinyaPrice ? `NT$ ${info.sinyaPrice.toLocaleString()}` : '無'}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start gap-2.5 min-w-0 pr-1">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleToggleAddon(addon.id)}
+                          className="mt-0.5 rounded border-slate-700 text-sky-500 focus:ring-0 cursor-pointer"
+                        />
+                        <div>
+                          <div className="font-semibold text-slate-100 text-xs sm:text-sm flex flex-wrap items-center gap-1.5">
+                            <span>{addon.name}</span>
+                            {isNic10g && hasBuiltIn10G && (
+                              <span className="text-[10px] font-bold text-amber-400 bg-amber-950/90 border border-amber-800 px-1.5 py-0.5 rounded">
+                                ⚡ 本機已內建10G (免加購)
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11px] text-slate-400 mt-0.5">
+                            原價屋: <strong className="text-slate-200">{info.coolpcText}</strong> | 欣亞: <strong className="text-slate-200">{info.sinyaText}</strong>
+                          </div>
                         </div>
                       </div>
+                      <span className="font-mono text-slate-200 flex-shrink-0 text-xs font-bold bg-slate-900/80 px-2 py-1 rounded-md border border-slate-700/60">
+                        +NT$ {info.bestPrice.toLocaleString()}
+                      </span>
                     </div>
-                    <span className="font-mono text-slate-300 flex-shrink-0 text-xs font-semibold">
-                      +NT$ {info.bestPrice.toLocaleString()}
-                    </span>
+
+                    {/* Actual Practical Function Explanation (實際作用說明) */}
+                    <div className="mt-2 pt-2 border-t border-slate-700/50 text-[11px] text-slate-300 leading-relaxed pl-6">
+                      <p className="text-sky-300/90">{addon.description}</p>
+                    </div>
                   </label>
                 );
               })}

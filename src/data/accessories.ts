@@ -977,7 +977,7 @@ export const ADDON_ACCESSORIES: AddonAccessory[] = [
     id: 'synology-e10g18-t1',
     name: 'Synology E10G18-T1 (單埠 10GbE RJ-45 PCIe 網卡)',
     type: 'nic_10g',
-    description: '適用於 DS1825+ / DS1825neo+ / DS1621+ PCIe 擴充槽，提供高達 10Gbps 高速傳輸（DS1823xs+ 已內建原生 10G 免加購）',
+    description: '【實際作用】將 NAS 網路頻寬升級至 10Gbps（實測傳輸高達 1,150 MB/s，1TB 傳輸從 2.5 小時縮短至 15 分鐘）。適用於 DS1825+/DS1825neo+ 標準 PCIe Gen3 x8 插槽（DS1823xs+ 已內建原生 10G 免加購）。',
     pricing: {
       coolpc: {
         source: 'coolpc',
@@ -1001,7 +1001,7 @@ export const ADDON_ACCESSORIES: AddonAccessory[] = [
     id: 'synology-e10g22-t1-mini',
     name: 'Synology E10G22-T1-Mini (10GbE RJ-45 升級模組)',
     type: 'nic_10g',
-    description: '專用 Mini 10G 模組，適用於 DS1522+ / DS923+ / DS1525+ 後方專用擴充槽',
+    description: '【實際作用】將網路頻寬提升 10 倍至 10Gbps（1,000+ MB/s 極速傳輸），支援 4K/8K 影片即時線上剪輯與團隊 TB 級大檔高速備份。專為具備 Network Upgrade Slot 機型設計。',
     pricing: {
       coolpc: {
         source: 'coolpc',
@@ -1025,7 +1025,7 @@ export const ADDON_ACCESSORIES: AddonAccessory[] = [
     id: 'synology-dx525',
     name: 'Synology DX525 (5-Bay 專用擴充櫃)',
     type: 'expansion_unit',
-    description: '專為 25 系列設計的 5-Bay eSATA 擴充儲存櫃，可為 DS1825+ 額外增加 5 顆硬碟插槽',
+    description: '【實際作用】透過高速 eSATA 連接線額外擴充 5 顆硬碟插槽，支援無縫線上動態擴充儲存池，最高擴充至 18 Bay。',
     pricing: {
       coolpc: {
         source: 'coolpc',
