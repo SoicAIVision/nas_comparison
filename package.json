@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run",
+    "test:run": "vitest run --pool=forks",
+    "crawl": "node scripts/crawl_prices.mjs",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

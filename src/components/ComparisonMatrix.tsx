@@ -1,6 +1,6 @@
 import React from 'react';
 import { CompletePlanEvaluation } from '../types';
-import { CheckCircle2, ShieldCheck, ShieldAlert, Trophy, DollarSign, Shuffle } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, ShieldAlert, Trophy, DollarSign, Shuffle, Layers, Network } from 'lucide-react';
 
 interface ComparisonMatrixProps {
   evaluations: CompletePlanEvaluation[];
@@ -66,7 +66,14 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ evaluations 
               </td>
               {evaluations.map((e) => (
                 <td key={e.config.id} className="py-3.5 px-4">
-                  <div className="font-bold text-slate-100 text-base">{e.nasModel.name}</div>
+                  <div className="font-bold text-slate-100 text-base flex items-center gap-1.5">
+                    {e.nasModel.name}
+                    {e.hasBuiltIn10G && (
+                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950 border border-emerald-800 px-1.5 py-0.5 rounded">
+                        10GbE
+                      </span>
+                    )}
+                  </div>
                   <div className="text-xs text-slate-400 mt-0.5">{e.nasModel.series} 系列 / {e.nasModel.cpu}</div>
                 </td>
               ))}
@@ -75,7 +82,7 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ evaluations 
             {/* Bay Occupancy */}
             <tr className="hover:bg-slate-800/30 transition">
               <td className="py-3.5 px-4 font-semibold text-slate-300 sticky left-0 bg-slate-900/95 z-10">
-                硬碟槽位 (Bay) 佔用
+                3.5吋 硬碟槽位佔用
               </td>
               {evaluations.map((e) => (
                 <td key={e.config.id} className="py-3.5 px-4 font-mono">
@@ -182,6 +189,34 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ evaluations 
               })}
             </tr>
 
+            {/* M.2 NVMe SSD Expansion Row (NEW) */}
+            <tr className="hover:bg-slate-800/30 transition">
+              <td className="py-3.5 px-4 font-semibold text-slate-300 sticky left-0 bg-slate-900/95 z-10">
+                M.2 NVMe 系統硬碟/快取
+              </td>
+              {evaluations.map((e) => (
+                <td key={e.config.id} className="py-3.5 px-4">
+                  {e.m2SsdCount > 0 && e.m2SsdModule ? (
+                    <div>
+                      <div className="font-semibold text-purple-300 text-sm flex items-center gap-1">
+                        <Layers className="w-3.5 h-3.5 text-purple-400" />
+                        {e.m2SsdCount} 顆 × {e.m2SsdModule.capacityGb}GB ({e.m2SsdModule.brand})
+                      </div>
+                      <div className="text-xs text-slate-400 mt-0.5">
+                        {e.m2Usage === 'storage_pool'
+                          ? e.m2SsdCount > 1
+                            ? '🚀 RAID 1 鏡像高速系統儲存集區 (Docker/VM/套件)'
+                            : '🚀 單碟獨立系統儲存集區 (Docker/VM)'
+                          : '⚡ 讀寫快取 (Cache 加速)'}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-slate-500">無加購 (僅使用 3.5 吋硬碟)</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+
             {/* RAM Config & Advice */}
             <tr className="hover:bg-slate-800/30 transition">
               <td className="py-3.5 px-4 font-semibold text-slate-300 sticky left-0 bg-slate-900/95 z-10">
@@ -208,7 +243,10 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ evaluations 
               </td>
               {evaluations.map((e) => (
                 <td key={e.config.id} className="py-3.5 px-4 text-xs text-slate-300">
-                  <div className="font-medium text-slate-200">{e.nasModel.ethernetPorts}</div>
+                  <div className="font-medium text-slate-200 flex items-center gap-1.5">
+                    <Network className="w-3.5 h-3.5 text-sky-400" />
+                    {e.nasModel.ethernetPorts}
+                  </div>
                   <div className="text-xs text-slate-400 mt-0.5">{e.nasModel.pcieSlots}</div>
                   {e.addons.length > 0 && (
                     <div className="text-xs text-sky-400 mt-1 font-medium">
@@ -235,7 +273,7 @@ export const ComparisonMatrix: React.FC<ComparisonMatrixProps> = ({ evaluations 
               ))}
             </tr>
 
-            {/* Sinyaw Total Price */}
+            {/* Sinya Total Price */}
             <tr className="hover:bg-slate-800/30 transition">
               <td className="py-3.5 px-4 font-semibold text-slate-300 sticky left-0 bg-slate-900/95 z-10">
                 欣亞數位線上估價

@@ -22,14 +22,15 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
   // Prepare simplified data for Stacked Price Breakdown Chart with clean concise names
   const priceChartData = evaluations.map((e, idx) => {
     const shortName = e.config.name.includes('：')
-      ? e.config.name.split('：')[0] + ` (${e.config.hddCount}x${e.hddModel.capacityTb}TB)`
-      : `方案 ${String.fromCharCode(65 + idx)} (${e.config.hddCount}x${e.hddModel.capacityTb}TB)`;
+      ? e.config.name.split('：')[0] + ` (${e.usedBays}x${e.hddModel.capacityTb}TB)`
+      : `方案 ${String.fromCharCode(65 + idx)} (${e.usedBays}x${e.hddModel.capacityTb}TB)`;
 
     return {
       name: shortName,
       fullName: e.config.name,
       主機成本: e.cost.nasCost.best,
       硬碟成本: e.cost.hddCost.best,
+      M2系統碟成本: e.cost.m2SsdCost.best,
       記憶體成本: e.cost.ramCost.best,
       配件成本: e.cost.addonsCost.best,
       總價: e.cost.totalBest,
@@ -40,8 +41,8 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
   // Prepare data for Capacity & Cost efficiency
   const capacityChartData = evaluations.map((e, idx) => {
     const shortName = e.config.name.includes('：')
-      ? e.config.name.split('：')[0] + ` (${e.config.hddCount}x${e.hddModel.capacityTb}TB)`
-      : `方案 ${String.fromCharCode(65 + idx)} (${e.config.hddCount}x${e.hddModel.capacityTb}TB)`;
+      ? e.config.name.split('：')[0] + ` (${e.usedBays}x${e.hddModel.capacityTb}TB)`
+      : `方案 ${String.fromCharCode(65 + idx)} (${e.usedBays}x${e.hddModel.capacityTb}TB)`;
 
     return {
       name: shortName,
@@ -61,7 +62,7 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
             各方案價格結構拆解 (Stacked Cost Breakdown)
           </h3>
           <p className="text-sm text-slate-400 mb-3">
-            拆解「NAS 主機 vs 硬碟群 vs 記憶體/擴充配件」支出比重
+            拆解「NAS 主機 vs 3.5吋硬碟 vs M.2系統碟 vs 記憶體/擴充配件」支出比重
           </p>
         </div>
 
@@ -110,8 +111,9 @@ export const VisualCharts: React.FC<VisualChartsProps> = ({ evaluations }) => {
               />
               <Bar dataKey="主機成本" stackId="a" fill="#0284c7" />
               <Bar dataKey="硬碟成本" stackId="a" fill="#10b981" />
+              <Bar dataKey="M2系統碟成本" stackId="a" fill="#a855f7" />
               <Bar dataKey="記憶體成本" stackId="a" fill="#f59e0b" />
-              <Bar dataKey="配件成本" stackId="a" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="配件成本" stackId="a" fill="#64748b" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

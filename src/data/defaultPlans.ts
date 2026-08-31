@@ -11,6 +11,9 @@ export const DEFAULT_PLANS: PlanConfiguration[] = [
     mixedDrives: [{ hddModelId: 'seagate-ironwolf-pro-18tb', count: 4 }],
     raidType: 'RAID5',
     selectedRamId: undefined, // 8GB ECC 標配
+    selectedM2SsdId: undefined,
+    m2SsdCount: 0,
+    m2Usage: 'storage_pool',
     selectedAddonIds: [],
     customNotes: '【最佳平衡解】4 顆 18TB 建立 RAID 5 擁有 54 TB 標稱容量 (49.1 TiB)，出廠標配 8GB ECC，保留 4 個空槽供未來無痛擴充',
   },
@@ -24,20 +27,26 @@ export const DEFAULT_PLANS: PlanConfiguration[] = [
     mixedDrives: [{ hddModelId: 'toshiba-n300-14tb', count: 5 }],
     raidType: 'RAID5',
     selectedRamId: undefined,
+    selectedM2SsdId: undefined,
+    m2SsdCount: 0,
+    m2Usage: 'storage_pool',
     selectedAddonIds: [],
     customNotes: '【最便宜解】DS1825neo+ 主機更平價，搭配 5 顆 Toshiba 14TB 達成 56 TB (50.9 TiB)，單 TB 建置成本與總價最省',
   },
   {
-    id: 'plan-c-flagship-raid6',
-    name: '方案 C：DS1825+ 旗艦高安全解 (6x16TB RAID 6 / 雙碟容錯)',
-    nasModelId: 'synology-ds1825-plus',
-    hddModelId: 'seagate-ironwolf-pro-16tb',
-    hddCount: 6,
+    id: 'plan-c-flagship-ds1823xs',
+    name: '方案 C：DS1823xs+ 企業旗艦 (4x20TB / 原生10G / 雙M.2系統碟)',
+    nasModelId: 'synology-ds1823xs-plus',
+    hddModelId: 'seagate-ironwolf-pro-20tb',
+    hddCount: 4,
     isMixedDrives: true,
-    mixedDrives: [{ hddModelId: 'seagate-ironwolf-pro-16tb', count: 6 }],
-    raidType: 'RAID6',
-    selectedRamId: 'synology-ecc-16gb-d4ecso-3200', // +16GB ECC (總計 24GB)
-    selectedAddonIds: ['synology-e10g18-t1'], // 10GbE 網卡
-    customNotes: '【最高安全性與效能解】RAID 6 容許 2 顆硬碟同時損壞仍保有 64 TB (58.2 TiB)，升級 24GB ECC RAM 與 10GbE 網卡',
+    mixedDrives: [{ hddModelId: 'seagate-ironwolf-pro-20tb', count: 4 }],
+    raidType: 'RAID5',
+    selectedRamId: undefined, // 8GB ECC 標配 (最高擴充至 32GB ECC)
+    selectedM2SsdId: 'kingston-kc3000-1tb',
+    m2SsdCount: 2, // 2 顆 M.2 組 RAID 1 鏡像系統碟
+    m2Usage: 'storage_pool',
+    selectedAddonIds: [], // 內建原生 10GbE 網卡，免加購！
+    customNotes: '【企業頂級旗艦】DS1823xs+ 原生內建 10GbE 網卡與 5 年保固；4 顆 20TB RAID 5 達成 60 TB (54.5 TiB)，並加裝 2 顆 1TB M.2 NVMe SSD 建立 RAID 1 高速系統集區 (Docker/VM/套件)',
   },
 ];

@@ -6,11 +6,12 @@ import {
   NasModel,
   HardDrive,
   RamModule,
+  M2SsdModule,
   AddonAccessory,
   EvaluatedDriveItem,
 } from '../types';
 import { NAS_MODELS } from '../data/nasModels';
-import { HARD_DRIVES, RAM_MODULES, ADDON_ACCESSORIES } from '../data/accessories';
+import { HARD_DRIVES, RAM_MODULES, M2_SSD_MODULES, ADDON_ACCESSORIES } from '../data/accessories';
 import { DEFAULT_PLANS } from '../data/defaultPlans';
 import { calculateMixedStorageCapacity } from '../utils/raidCalculator';
 import { calculatePlanCost } from '../utils/costCalculator';
@@ -68,7 +69,7 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
     const existingPlans = get().plans;
     const newId = 'plan-' + Date.now();
     const defaultNas = NAS_MODELS[0];
-    const defaultHdd = HARD_DRIVES[1]; // 18TB IronWolf Pro
+    const defaultHdd = HARD_DRIVES[1]; // 20TB IronWolf Pro
 
     const hddId = customPlan?.hddModelId || defaultHdd.id;
     const hddCnt = customPlan?.hddCount ?? 4;
@@ -83,6 +84,9 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
       hddCount: hddCnt,
       raidType: customPlan?.raidType || 'RAID5',
       selectedRamId: customPlan?.selectedRamId,
+      selectedM2SsdId: customPlan?.selectedM2SsdId,
+      m2SsdCount: customPlan?.m2SsdCount ?? 0,
+      m2Usage: customPlan?.m2Usage || 'storage_pool',
       selectedAddonIds: customPlan?.selectedAddonIds || [],
       customNotes: customPlan?.customNotes || '',
     };
@@ -282,7 +286,25 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
         }
       }
 
-      // 4. Resolve Addons
+      // 4. Resolve M.2 SSD
+      let m2SsdModule: M2SsdModule | undefined = undefined;
+      const m2Count = config.m2SsdCount || 0;
+      if (config.selectedM2SsdId && m2Count > 0) {
+        const baseM2 = M2_SSD_MODULES.find((m) => m.id === config.selectedM2SsdId);
+        if (baseM2) {
+          const m2Pricing = priceDb?.items[baseM2.id] || baseM2.pricing;
+          m2SsdModule = {
+            ...baseM2,
+            pricing: matchAndMergePrices(m2Pricing),
+          };
+          if (priceOverrides[m2SsdModule.id] !== undefined) {
+            m2SsdModule.pricing.bestPrice = priceOverrides[m2SsdModule.id];
+            m2SsdModule.pricing.bestSource = 'manual';
+          }
+        }
+      }
+
+      // 5. Resolve Addons
       const addons: AddonAccessory[] = config.selectedAddonIds
         .map((addonId) => {
           const baseAddon = ADDON_ACCESSORIES.find((a) => a.id === addonId);
@@ -300,7 +322,7 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
         })
         .filter((a): a is AddonAccessory => a !== null);
 
-      // 5. Calculate storage with Slicing & SHR support
+      // 6. Calculate storage with Slicing & SHR support
       const storage = calculateMixedStorageCapacity({
         diskCapacities,
         raidType: config.raidType,
@@ -318,20 +340,23 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
         }
       }
 
-      // 6. Calculate costs
+      // 7. Calculate costs
       const cost = calculatePlanCost({
         nasModel,
         mixedDrives: evaluatedDriveItems,
         ramModule,
+        m2SsdModule,
+        m2SsdCount: m2Count,
         addons,
         usableTb: storage.usableTb,
       });
 
-      // 7. Calculate Bay stats & compatibility
+      // 8. Calculate Bay stats & compatibility
       const usedBays = evaluatedDriveItems.reduce((acc, curr) => acc + curr.count, 0);
       const freeBays = Math.max(0, nasModel.bays - usedBays);
       const totalRamGb = nasModel.defaultRamGb + (ramModule?.capacityGb || 0);
       const ramIsEcc = nasModel.defaultRamType.includes('ECC') && (!ramModule || ramModule.type.includes('ECC'));
+      const hasBuiltIn10G = !!nasModel.hasBuiltIn10G;
 
       const compatibilityWarnings: string[] = [];
       if (usedBays > nasModel.bays) {
@@ -343,6 +368,9 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
       if (nasModel.series === 'neo+' && ramModule && ramModule.type.includes('ECC')) {
         compatibilityWarnings.push('DS1825neo+ 原廠預載 4GB non-ECC 記憶體，升級 ECC 時需拔除原廠 4GB 模組以避免混插不相容。');
       }
+      if (hasBuiltIn10G && config.selectedAddonIds.includes('synology-e10g18-t1')) {
+        compatibilityWarnings.push('💡 提醒：此 NAS 機型已標配原生 10GbE 網卡，除非需要雙 10G 鏈路聚合 (LAG)，否則無需額外加購 10GbE 擴充卡。');
+      }
 
       return {
         config,
@@ -351,6 +379,10 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
         isMixedDrives: isMixed,
         mixedDriveItems: evaluatedDriveItems,
         ramModule,
+        m2SsdModule,
+        m2SsdCount: m2Count,
+        m2Usage: config.m2Usage || 'storage_pool',
+        hasBuiltIn10G,
         addons,
         storage,
         cost,

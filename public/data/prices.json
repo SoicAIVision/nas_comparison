@@ -1,42 +1,60 @@
 {
-  "timestamp": "2026-08-30T18:57:41.769Z",
-  "coolpcTimestamp": "2026-08-30T18:57:41.769Z",
-  "sinyaTimestamp": "2026-08-30T18:57:41.769Z",
+  "timestamp": "2026-08-31T06:53:09.316Z",
+  "coolpcTimestamp": "2026-08-31T06:53:09.316Z",
+  "sinyaTimestamp": "2026-08-31T06:53:09.316Z",
   "items": {
     "synology-ds1825-plus": {
       "coolpc": {
         "source": "coolpc",
-        "price": 32999,
+        "price": 47150,
         "inStock": true,
-        "itemTitle": "群暉 DS1825+ 8Bay NAS/AMD 4C/8G ECC/雙2.5G/雙M.2/三年保",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "｛Synology DS1825+｝【8Bay】AMD Ryzen V1500B 四核 (2.2GHz/8GB/M.2*2/2.5Gb*2), $47150",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 32999,
+        "price": 47139,
         "inStock": true,
         "itemTitle": "Synology 群暉 DiskStation DS1825+ 8-Bay 網路儲存伺服器",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 32999,
-      "bestSource": "both"
+      "bestPrice": 47139,
+      "bestSource": "sinya"
+    },
+    "synology-ds1823xs-plus": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 53850,
+        "inStock": true,
+        "itemTitle": "｛Synology DS1823xs+｝【8Bay】AMD Ryzen V1780B 四核 (3.35GHz/8GB/10Gb*1), $53850",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 53848,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 DiskStation DS1823xs+ 8-Bay 旗艦網路儲存伺服器",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 53848,
+      "bestSource": "sinya"
     },
     "synology-ds1825-neo-plus": {
       "coolpc": {
         "source": "coolpc",
-        "price": 29999,
+        "price": 29888,
         "inStock": true,
-        "itemTitle": "群暉 DS1825neo+ 8Bay NAS/AMD 4C/4G/雙2.5G/雙M.2/三年保",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "Synology DS1825neo+【8Bay】AMD Ryzen V1500B 四核 (2.2GHz/4GB/雙2.5G/雙M.2)",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 29888,
+        "price": 29885,
         "inStock": true,
         "itemTitle": "Synology 群暉 DiskStation DS1825neo+ 8-Bay (預載4GB)",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 29888,
+      "bestPrice": 29885,
       "bestSource": "sinya"
     },
     "synology-ds1621-plus": {
@@ -44,180 +62,648 @@
         "source": "coolpc",
         "price": 27999,
         "inStock": true,
-        "itemTitle": "群暉 DS1621+ 6Bay NAS/AMD 4C/4G ECC/4埠GbE/雙M.2/三年保",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "Synology DS1621+【6Bay】AMD Ryzen V1500B 四核 (2.2GHz/4GB/4埠GbE/雙M.2)",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 27999,
+        "price": 27997,
         "inStock": true,
         "itemTitle": "Synology 群暉 DiskStation DS1621+ 6-Bay 網路儲存伺服器",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 27999,
-      "bestSource": "both"
+      "bestPrice": 27997,
+      "bestSource": "sinya"
+    },
+    "synology-ds1525-plus": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 39999,
+        "inStock": true,
+        "itemTitle": "｛Synology DS1525+｝【5Bay】AMD V1500B 四核 (2.2GHz/8GB D4/M.2*2/2.5Gb*2), $39999",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 39984,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 DiskStation DS1525+ 5-Bay 網路儲存伺服器",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 39984,
+      "bestSource": "sinya"
     },
     "synology-ds1522-plus": {
       "coolpc": {
         "source": "coolpc",
-        "price": 22499,
+        "price": 3800,
         "inStock": true,
-        "itemTitle": "群暉 DS1522+ 5Bay NAS/AMD 2C/8G ECC/4埠GbE/雙M.2/三年保",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "｛Synology E10G22-T1-Mini｝10GbE 網路模組 (適用DS923+/DS723+/DS1522+/DS1525+), $3800",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 22490,
+        "price": 3800,
         "inStock": true,
         "itemTitle": "Synology 群暉 DS1522+ 5-Bay 網路儲存伺服器",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 22490,
+      "bestPrice": 3800,
+      "bestSource": "both"
+    },
+    "synology-ds925-plus": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 27199,
+        "inStock": true,
+        "itemTitle": "｛Synology DS925+｝【4Bay】AMD V1500B 四核 (2.2GHz/4GB D4/M.2*2/2.5Gb*2), $27199",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 27198,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 DiskStation DS925+ 4-Bay 網路儲存伺服器",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 27198,
       "bestSource": "sinya"
     },
     "synology-ds923-plus": {
       "coolpc": {
         "source": "coolpc",
-        "price": 17999,
+        "price": 6499,
         "inStock": true,
-        "itemTitle": "群暉 DS923+ 4Bay NAS/AMD 2C/4G ECC/雙GbE/雙M.2/三年保",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "｛Synology D4ES02-4G｝ECC SODIMM (適用:DS923+/DS723+)支援型號→, $6499",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 17990,
+        "price": 6492,
         "inStock": true,
         "itemTitle": "Synology 群暉 DiskStation DS923+ 4-Bay 網路儲存伺服器",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 17990,
+      "bestPrice": 6492,
       "bestSource": "sinya"
+    },
+    "qnap-ts-873a-8g": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 40920,
+        "inStock": true,
+        "itemTitle": "｛QNAP TS-873A-8G｝【8Bay】AMD V1500B 四核 (2.2GHz/8GB/2.5Gb*2/PCIe*2), $40920",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 40917,
+        "inStock": true,
+        "itemTitle": "威聯通 QNAP TS-873A-8G 8-Bay 網路儲存伺服器",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 40917,
+      "bestSource": "sinya"
+    },
+    "seagate-ironwolf-pro-24tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 32890,
+        "inStock": true,
+        "itemTitle": "Seagate 24TB【那嘶狼 PRO】512M/7200轉/5年/3年 Rescue｛ST24000NT002｝, $32890",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 32890,
+        "inStock": true,
+        "itemTitle": "Seagate 那嘶狼 Pro IronWolf Pro 24TB 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 32890,
+      "bestSource": "both"
     },
     "seagate-ironwolf-pro-20tb": {
       "coolpc": {
         "source": "coolpc",
-        "price": 16990,
+        "price": 27890,
         "inStock": true,
-        "itemTitle": "Seagate 20TB【那嘶狼 Pro】(7200轉/256M/五年保/Rescue五年)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "Seagate 20TB【那嘶狼 PRO】256M/7200轉/5年/3年 Rescue｛ST20000NT001｝【限搭機】, $27890",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 16888,
+        "price": 27885,
         "inStock": true,
         "itemTitle": "Seagate 那嘶狼 Pro IronWolf Pro 20TB (ST20000NT001) 3.5吋 NAS硬碟",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 16888,
+      "bestPrice": 27885,
       "bestSource": "sinya"
     },
     "seagate-ironwolf-pro-18tb": {
       "coolpc": {
         "source": "coolpc",
-        "price": 13990,
+        "price": 24890,
         "inStock": true,
-        "itemTitle": "Seagate 18TB【那嘶狼 Pro】(7200轉/256M/五年保/Rescue五年)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "Seagate 18TB【那嘶狼 PRO】(7200轉/256M/五年保/Rescue五年)(ST18000NT001)",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 13990,
+        "price": 24875,
         "inStock": true,
         "itemTitle": "Seagate 那嘶狼 Pro IronWolf Pro 18TB (ST18000NT001) 3.5吋 NAS硬碟",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 13990,
-      "bestSource": "both"
+      "bestPrice": 24875,
+      "bestSource": "sinya"
     },
     "seagate-ironwolf-pro-16tb": {
       "coolpc": {
         "source": "coolpc",
-        "price": 11990,
+        "price": 22890,
         "inStock": true,
-        "itemTitle": "Seagate 16TB【那嘶狼 Pro】(7200轉/256M/五年保/Rescue五年)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "Seagate 16TB【那嘶狼 PRO】256M/7200轉/5年/3年 Rescue｛ST16000NT001｝【限搭機】, $22890",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 11888,
+        "price": 22887,
         "inStock": true,
         "itemTitle": "Seagate 那嘶狼 Pro IronWolf Pro 16TB (ST16000NT001) 3.5吋 NAS硬碟",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 11888,
+      "bestPrice": 22887,
       "bestSource": "sinya"
     },
-    "wd-red-pro-18tb": {
+    "seagate-ironwolf-pro-12tb": {
       "coolpc": {
         "source": "coolpc",
-        "price": 14880,
+        "price": 17890,
         "inStock": true,
-        "itemTitle": "WD 18TB【紅標 Pro】(7200轉/512M/五年保)(WD181KFGX)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "Seagate 12TB【那嘶狼 PRO】256M/7200轉/5年保/3年 Rescue｛ST12000NT001｝【限搭機】, $17890",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 14750,
+        "price": 17886,
         "inStock": true,
-        "itemTitle": "Western Digital WD Red Pro 紅標 18TB (WD181KFGX) NAS 專用硬碟",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "itemTitle": "Seagate 那嘶狼 Pro IronWolf Pro 12TB (ST12000NT001) 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 14750,
+      "bestPrice": 17886,
       "bestSource": "sinya"
     },
-    "toshiba-n300-16tb": {
+    "seagate-ironwolf-pro-8tb": {
       "coolpc": {
         "source": "coolpc",
-        "price": 10490,
+        "price": 13390,
         "inStock": true,
-        "itemTitle": "TOSHIBA 16TB【N300 NAS碟】(7200轉/512M/三年保)(HDWG31GXZSTA)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "Seagate 8TB【那嘶狼 PRO】256M/7200轉/5年保/3年 Rescue｛ST8000NT001｝【限搭機】, $13390",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 10490,
+        "price": 13377,
         "inStock": true,
-        "itemTitle": "TOSHIBA 東芝 N300 16TB (HDWG31GXZSTA) 3.5吋 NAS硬碟",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "itemTitle": "Seagate 那嘶狼 Pro IronWolf Pro 8TB (ST8000NT001) 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 10490,
-      "bestSource": "both"
-    },
-    "toshiba-n300-14tb": {
-      "coolpc": {
-        "source": "coolpc",
-        "price": 8990,
-        "inStock": true,
-        "itemTitle": "TOSHIBA 14TB【N300 NAS碟】(7200轉/512M/三年保)(HDWG21EXZSTA)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
-      },
-      "sinya": {
-        "source": "sinya",
-        "price": 8950,
-        "inStock": true,
-        "itemTitle": "TOSHIBA 東芝 N300 14TB (HDWG21EXZSTA) 3.5吋 NAS硬碟",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
-      },
-      "bestPrice": 8950,
+      "bestPrice": 13377,
       "bestSource": "sinya"
     },
     "seagate-ironwolf-8tb": {
       "coolpc": {
         "source": "coolpc",
-        "price": 5990,
+        "price": 11890,
         "inStock": true,
-        "itemTitle": "Seagate 8TB【那嘶狼】(5400轉/256M/三年保/Rescue三年)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "Seagate 8TB【那嘶狼】256M/5400轉/3年保/3年 Rescue｛ST8000VN002｝【限搭機】, $11890",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 5990,
+        "price": 11877,
         "inStock": true,
         "itemTitle": "Seagate 那嘶狼 IronWolf 8TB (ST8000VN004) 3.5吋 NAS硬碟",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 5990,
+      "bestPrice": 11877,
+      "bestSource": "sinya"
+    },
+    "seagate-ironwolf-4tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 6950,
+        "inStock": true,
+        "itemTitle": "Seagate 4TB【那嘶狼】256M/5400轉/3年保/3年 Rescue｛ST4000VN006｝【少量到貨】, $6950",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 6949,
+        "inStock": true,
+        "itemTitle": "Seagate 那嘶狼 IronWolf 4TB (ST4000VN006) 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 6949,
+      "bestSource": "sinya"
+    },
+    "toshiba-n300-22tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 33000,
+        "inStock": true,
+        "itemTitle": "Toshiba 22TB【NAS碟】512M/7200轉/3年保｛HDWG62CAZSTA｝【限搭機】, $33000",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 32994,
+        "inStock": true,
+        "itemTitle": "TOSHIBA 東芝 N300 22TB 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 32994,
+      "bestSource": "sinya"
+    },
+    "toshiba-n300-20tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 29700,
+        "inStock": true,
+        "itemTitle": "Toshiba 20TB【NAS碟】512M/7200轉/3年保｛HDWG62AAZSTA｝【限搭機】, $29700",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 29686,
+        "inStock": true,
+        "itemTitle": "TOSHIBA 東芝 N300 20TB 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 29686,
+      "bestSource": "sinya"
+    },
+    "toshiba-n300-18tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 26700,
+        "inStock": true,
+        "itemTitle": "Toshiba 18TB【NAS碟】512M/7200轉/3年保｛HDWG51JAZSTA｝【限搭機】, $26700",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 26698,
+        "inStock": true,
+        "itemTitle": "TOSHIBA 東芝 N300 18TB 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 26698,
+      "bestSource": "sinya"
+    },
+    "toshiba-n300-16tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 24700,
+        "inStock": true,
+        "itemTitle": "Toshiba 16TB【NAS碟】512M/7200轉/3年保｛HDWG51GAZSTA｝【限搭機】, $24700",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 24693,
+        "inStock": true,
+        "itemTitle": "TOSHIBA 東芝 N300 16TB 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 24693,
+      "bestSource": "sinya"
+    },
+    "toshiba-n300-14tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 22700,
+        "inStock": true,
+        "itemTitle": "Toshiba 14TB【NAS碟】512M/7200轉/3年保｛HDWG51EAZSTA｝【限搭機】, $22700",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 22690,
+        "inStock": true,
+        "itemTitle": "TOSHIBA 東芝 N300 14TB 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 22690,
+      "bestSource": "sinya"
+    },
+    "toshiba-n300-12tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 18900,
+        "inStock": true,
+        "itemTitle": "Toshiba 12TB【NAS碟】512M/7200轉/3年保｛HDWG51CAZSTA｝【限搭機】, $18900",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 18894,
+        "inStock": true,
+        "itemTitle": "TOSHIBA 東芝 N300 12TB 3.5吋 NAS硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 18894,
+      "bestSource": "sinya"
+    },
+    "wd-red-pro-18tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 29890,
+        "inStock": true,
+        "itemTitle": "WD 18TB【金標】512MB/7200轉/5年保｛WD181KRYZ｝【限搭機】, $29890",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 29889,
+        "inStock": true,
+        "itemTitle": "Western Digital WD Red Pro 紅標 18TB (WD181KFGX) NAS 專用硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 29889,
+      "bestSource": "sinya"
+    },
+    "wd-red-pro-16tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 26890,
+        "inStock": true,
+        "itemTitle": "WD 16TB【紅標PRO】512M/7200轉/5年保｛WD161KFGX｝【限搭機】, $26890",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 26887,
+        "inStock": true,
+        "itemTitle": "Western Digital WD Red Pro 16TB (WD161KFGX) NAS 硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 26887,
+      "bestSource": "sinya"
+    },
+    "wd-red-pro-12tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 19890,
+        "inStock": true,
+        "itemTitle": "WD 12TB【紅標PRO】512M/7200轉/5年保｛WD122KFBX｝【限搭機】, $19890",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 19876,
+        "inStock": true,
+        "itemTitle": "Western Digital WD Red Pro 12TB NAS 硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 19876,
+      "bestSource": "sinya"
+    },
+    "wd-red-plus-8tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 13490,
+        "inStock": true,
+        "itemTitle": "WD 8TB【紅標Plus】256M/5640轉/3年保｛WD80EFPX｝【限搭機】, $13490",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 13488,
+        "inStock": true,
+        "itemTitle": "Western Digital WD Red Plus 8TB (WD80EFPX) NAS 硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 13488,
+      "bestSource": "sinya"
+    },
+    "synology-hat3320-20tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 28900,
+        "inStock": true,
+        "itemTitle": "｛Synology HAT3320 PLUS 20TB｝3.5吋/7200轉/三年保固【限搭NAS主機】, $28900",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 28887,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 Plus HAT3320-20T 20TB 3.5吋 NAS 硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 28887,
+      "bestSource": "sinya"
+    },
+    "synology-hat3310-16tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 23200,
+        "inStock": true,
+        "itemTitle": "｛Synology HAT3310 PLUS 16TB｝3.5吋/7200轉/三年保固【限搭NAS主機】, $23200",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 23181,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 Plus HAT3310-16T 16TB 3.5吋 NAS 硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 23181,
+      "bestSource": "sinya"
+    },
+    "synology-hat3310-12tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 19450,
+        "inStock": true,
+        "itemTitle": "｛Synology HAT3310 PLUS 12TB｝3.5吋/7200轉/三年保固【限搭NAS主機】, $19450",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 19447,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 Plus HAT3310-12T 12TB 3.5吋 NAS 硬碟",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 19447,
+      "bestSource": "sinya"
+    },
+    "synology-snv3410-400g": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 15300,
+        "inStock": true,
+        "itemTitle": "｛Synology SNV3410 400G｝M.2 2280 NVMe PCIe 讀:3000/寫:750/五年保固, $15300",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 15300,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 SNV3410-400G M.2 2280 NVMe PCIe SSD",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 15300,
       "bestSource": "both"
+    },
+    "synology-snv3410-800g": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 18900,
+        "inStock": true,
+        "itemTitle": "Synology SNV3410 800G M.2 2280 NVMe PCIe (企業級高耐久/五年保固)",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 18895,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 SNV3410-800G M.2 2280 NVMe PCIe SSD",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 18895,
+      "bestSource": "sinya"
+    },
+    "kingston-kc3000-1tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 5499,
+        "inStock": true,
+        "itemTitle": "[加購省] 8/31前 買技嘉X870 AORUS以上主板加購金士頓 KC3000 1TB SSD(原價6990), $5499",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 5497,
+        "inStock": true,
+        "itemTitle": "Kingston 金士頓 KC3000 1TB PCIe 4.0 NVMe M.2 SSD",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 5497,
+      "bestSource": "sinya"
+    },
+    "kingston-kc3000-2tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 11000,
+        "inStock": true,
+        "itemTitle": "｛金士頓 KC3000 2TB｝/Gen4 PCIe 4.0/讀7000/寫7000/TLC【五年保】, $11000",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 10985,
+        "inStock": true,
+        "itemTitle": "Kingston 金士頓 KC3000 2TB PCIe 4.0 NVMe M.2 SSD",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 10985,
+      "bestSource": "sinya"
+    },
+    "crucial-t500-1tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 7229,
+        "inStock": true,
+        "itemTitle": "美光 Micron Crucial｛T500 1TB｝/Gen4 PCIe 4.0/讀7300/:6800/3D TLC【五年保】, $7229",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 7211,
+        "inStock": true,
+        "itemTitle": "Micron Crucial T500 1TB PCIe 4.0 NVMe M.2 SSD",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 7211,
+      "bestSource": "sinya"
+    },
+    "crucial-t500-2tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 11500,
+        "inStock": true,
+        "itemTitle": "美光 Micron Crucial｛T500 2TB｝/Gen4 PCIe 4.0/讀7400/寫7000/3D TLC【五年保】, $11500",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 11483,
+        "inStock": true,
+        "itemTitle": "Micron Crucial T500 2TB PCIe 4.0 NVMe M.2 SSD",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 11483,
+      "bestSource": "sinya"
+    },
+    "wd-black-sn850x-1tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 9999,
+        "inStock": true,
+        "itemTitle": "WD 黑標｛SN850X 1TB｝/Gen4 PCIe 4.0/讀7300/寫6300/TLC/電競級【五年保】, $9999",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 9997,
+        "inStock": true,
+        "itemTitle": "WD 黑標 SN850X 1TB NVMe PCIe Gen4 SSD",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 9997,
+      "bestSource": "sinya"
+    },
+    "wd-black-sn850x-2tb": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 19100,
+        "inStock": true,
+        "itemTitle": "WD 黑標｛SN850X 2TB｝/Gen4 PCIe 4.0/讀7300/寫6600/TLC/電競級【五年保】, $19100",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 19089,
+        "inStock": true,
+        "itemTitle": "WD 黑標 SN850X 2TB NVMe PCIe Gen4 SSD",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 19089,
+      "bestSource": "sinya"
+    },
+    "synology-d4es03-8g": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 16900,
+        "inStock": true,
+        "itemTitle": "｛Synology D4ES03-8G｝ECC SODIMM (適用:DS925+/DS725+/DS1525+/DS1825+)支援型號→, $16900",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 16891,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 8GB DDR4 ECC SODIMM (D4ES03-8G)",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 16891,
+      "bestSource": "sinya"
     },
     "synology-ecc-16gb-d4ecso-3200": {
       "coolpc": {
@@ -225,34 +711,34 @@
         "price": 8999,
         "inStock": true,
         "itemTitle": "Synology 群暉 D4ECSO-3200-16G 原廠記憶體 (ECC SODIMM)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 8900,
+        "price": 8999,
         "inStock": true,
         "itemTitle": "Synology 群暉 16GB DDR4 ECC SODIMM (D4ECSO-3200-16G)",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 8900,
-      "bestSource": "sinya"
+      "bestPrice": 8999,
+      "bestSource": "both"
     },
     "synology-ecc-8gb-d4ecso-3200": {
       "coolpc": {
         "source": "coolpc",
-        "price": 4999,
+        "price": 6499,
         "inStock": true,
-        "itemTitle": "Synology 群暉 D4ECSO-3200-8G 原廠記憶體 (ECC SODIMM)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "｛Synology D4ES02-4G｝ECC SODIMM (適用:DS923+/DS723+)支援型號→, $6499",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 4950,
+        "price": 6492,
         "inStock": true,
         "itemTitle": "Synology 群暉 8GB DDR4 ECC SODIMM (D4ECSO-3200-8G)",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 4950,
+      "bestPrice": 6492,
       "bestSource": "sinya"
     },
     "transcend-ecc-16gb-ddr4-3200": {
@@ -261,17 +747,17 @@
         "price": 2650,
         "inStock": true,
         "itemTitle": "創見 16GB DDR4-3200 ECC SO-DIMM (TS2GSH72V2B)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 2599,
+        "price": 2650,
         "inStock": true,
         "itemTitle": "Transcend 創見 16GB DDR4 3200 ECC SO-DIMM 相容 NAS 記憶體",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 2599,
-      "bestSource": "sinya"
+      "bestPrice": 2650,
+      "bestSource": "both"
     },
     "synology-e10g18-t1": {
       "coolpc": {
@@ -279,34 +765,52 @@
         "price": 4499,
         "inStock": true,
         "itemTitle": "Synology E10G18-T1 單埠 10GbE 網路擴充卡 (PCIe 3.0 x4)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 4450,
+        "price": 4499,
         "inStock": true,
         "itemTitle": "Synology 群暉 E10G18-T1 單埠 10GbE RJ-45 PCIe 網路擴充卡",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 4450,
-      "bestSource": "sinya"
+      "bestPrice": 4499,
+      "bestSource": "both"
     },
-    "synology-snv3410-800g": {
+    "synology-e10g22-t1-mini": {
       "coolpc": {
         "source": "coolpc",
-        "price": 5299,
+        "price": 3800,
         "inStock": true,
-        "itemTitle": "Synology SNV3410 800GB M.2 2280 NVMe SSD (企業級耐用度)",
-        "updatedAt": "2026-08-26T13:30:00+08:00"
+        "itemTitle": "｛Synology E10G22-T1-Mini｝10GbE 網路模組 (適用DS923+/DS723+/DS1522+/DS1525+), $3800",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
       "sinya": {
         "source": "sinya",
-        "price": 5250,
+        "price": 3800,
         "inStock": true,
-        "itemTitle": "Synology 群暉 SNV3410-800G M.2 2280 NVMe PCIe SSD",
-        "updatedAt": "2026-08-26T13:28:00+08:00"
+        "itemTitle": "Synology 群暉 E10G22-T1-Mini 10GbE 升級模組",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
       },
-      "bestPrice": 5250,
+      "bestPrice": 3800,
+      "bestSource": "both"
+    },
+    "synology-dx525": {
+      "coolpc": {
+        "source": "coolpc",
+        "price": 15500,
+        "inStock": true,
+        "itemTitle": "｛Synology DX525｝【5Bay】擴充櫃 (適用25系列), $15500",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "sinya": {
+        "source": "sinya",
+        "price": 15491,
+        "inStock": true,
+        "itemTitle": "Synology 群暉 DX525 5-Bay 擴充裝置",
+        "updatedAt": "2026-08-31T06:53:09.316Z"
+      },
+      "bestPrice": 15491,
       "bestSource": "sinya"
     }
   }

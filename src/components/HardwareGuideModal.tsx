@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { X, Server, HardDrive, Cpu, Zap, Info, AlertOctagon, CheckCircle2, ArrowRight } from 'lucide-react';
+import { X, Server, HardDrive, Cpu, Info, AlertOctagon, CheckCircle2, ArrowRight, Layers, Network } from 'lucide-react';
 
 interface HardwareGuideModalProps {
   isOpen: boolean;
   onClose: () => void;
-  defaultTab?: 'nas' | 'hdd' | 'ram' | 'addons';
+  defaultTab?: 'nas' | 'hdd' | 'ram' | 'm2' | 'addons';
 }
 
 export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
@@ -12,7 +12,7 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
   onClose,
   defaultTab = 'nas',
 }) => {
-  const [activeTab, setActiveTab] = useState<'nas' | 'hdd' | 'ram' | 'addons'>(defaultTab);
+  const [activeTab, setActiveTab] = useState<'nas' | 'hdd' | 'ram' | 'm2' | 'addons'>(defaultTab);
 
   if (!isOpen) return null;
 
@@ -43,16 +43,16 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
             <div>
               <h3 className="text-xl font-bold text-white tracking-tight">NAS 採購評估與硬體配件選配指南</h3>
               <p className="text-sm text-slate-400 mt-0.5">
-                深入解析 NAS 主機型號定位、硬碟選購差異、記憶體 ECC 機制與擴充配件
+                深入解析 NAS 主機型號定位、硬碟選購差異、M.2 系統碟優勢、記憶體 ECC 機制與 10G 網路規劃
               </p>
             </div>
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex flex-wrap gap-2.5 mt-5 border-b border-slate-800 pb-2.5">
+          <div className="flex flex-wrap gap-2 mt-5 border-b border-slate-800 pb-2.5">
             <button
               onClick={() => setActiveTab('nas')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                 activeTab === 'nas'
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20'
                   : 'bg-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-700'
@@ -63,36 +63,47 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('hdd')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                 activeTab === 'hdd'
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20'
                   : 'bg-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-700'
               }`}
             >
               <HardDrive className="w-4 h-4" />
-              2. 硬碟選購與 50TB 空間
+              2. 3.5吋 硬碟與 50TB 空間
+            </button>
+            <button
+              onClick={() => setActiveTab('m2')}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                activeTab === 'm2'
+                  ? 'bg-purple-600 text-white shadow-md shadow-purple-600/20'
+                  : 'bg-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-700'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              3. M.2 系統碟 (Volume) vs Bay
             </button>
             <button
               onClick={() => setActiveTab('ram')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                 activeTab === 'ram'
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20'
                   : 'bg-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-700'
               }`}
             >
               <Cpu className="w-4 h-4" />
-              3. 記憶體 (RAM) 與 TB傳輸需求
+              4. 記憶體 (RAM) 與大檔傳輸
             </button>
             <button
               onClick={() => setActiveTab('addons')}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                 activeTab === 'addons'
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20'
                   : 'bg-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-700'
               }`}
             >
-              <Zap className="w-4 h-4" />
-              4. 10GbE 網卡與 M.2 快取
+              <Network className="w-4 h-4" />
+              5. 10GbE 網卡與網路規劃
             </button>
           </div>
         </div>
@@ -105,34 +116,55 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
               <div className="p-4 sm:p-5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
                 <div className="font-bold text-base text-sky-400 flex items-center gap-2">
                   <Server className="w-5 h-5" />
-                  Synology 旗艦 8-Bay 機型定位（DS1825+ vs DS1825neo+）
+                  Synology 旗艦 8-Bay 三大機種定位（DS1823xs+ vs DS1825+ vs DS1825neo+）
                 </div>
                 <p>
                   對於目標建置 <strong>50TB 以上有效儲存容量</strong> 的團隊或企業，<strong>8-Bay 機型</strong> 是擴充彈性最高、最具投資效益的選擇。
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-2">
-                  <div className="p-3.5 bg-slate-900 border border-sky-800/60 rounded-xl space-y-2">
-                    <div className="font-bold text-base text-sky-300 flex items-center justify-between">
-                      <span>Synology DS1825+ (標準版)</span>
-                      <span className="text-xs bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded">企業首選</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-2">
+                  {/* DS1823xs+ */}
+                  <div className="p-3.5 bg-slate-900 border border-emerald-800/70 rounded-xl space-y-2">
+                    <div className="font-bold text-base text-emerald-300 flex items-center justify-between">
+                      <span>DS1823xs+ (企業旗艦)</span>
+                      <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">
+                        ⚡ 內建 10G
+                      </span>
                     </div>
-                    <ul className="list-disc list-inside text-slate-300 space-y-1 text-xs sm:text-sm">
-                      <li><strong>出廠標配 8GB ECC DDR4 記憶體</strong>，直接享有企業級錯誤修正保護。</li>
-                      <li>配備 4 核心 AMD Ryzen V1500B 處理器、雙 2.5GbE 網路埠、雙 M.2 NVMe 插槽。</li>
-                      <li>具備 PCIe 3.0 x8 (x4 頻寬) 擴充槽，可升級 10GbE / 25GbE 高速網卡。</li>
-                      <li>支援加掛 2 台 DX525 擴充櫃（最高擴充至 18 Bay）。</li>
+                    <ul className="list-disc list-inside text-slate-300 space-y-1 text-xs">
+                      <li><strong>AMD Ryzen V1780B</strong> 高主頻 3.35GHz 處理器（效能最強）。</li>
+                      <li><strong>原生內建 1 x 10GbE RJ-45 網卡</strong>（免加購網卡直接享有 1,000MB/s 傳輸）。</li>
+                      <li>標配 8GB ECC DDR4 記憶體。</li>
+                      <li><strong>享有原廠 5 年頂級企業保固</strong>。</li>
+                      <li>最新報價約 NT$ 53,850。</li>
                     </ul>
                   </div>
 
-                  <div className="p-3.5 bg-slate-900 border border-slate-700 rounded-xl space-y-2">
-                    <div className="font-bold text-base text-emerald-300 flex items-center justify-between">
-                      <span>Synology DS1825neo+ (預算親民版)</span>
-                      <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">高 CP 值</span>
+                  {/* DS1825+ */}
+                  <div className="p-3.5 bg-slate-900 border border-sky-800/60 rounded-xl space-y-2">
+                    <div className="font-bold text-base text-sky-300 flex items-center justify-between">
+                      <span>DS1825+ (2025新世代)</span>
+                      <span className="text-xs bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded">雙 2.5G</span>
                     </div>
-                    <ul className="list-disc list-inside text-slate-300 space-y-1 text-xs sm:text-sm">
-                      <li>硬體核心架構（主機板、CPU、8-Bay 機構、雙 2.5GbE）與 DS1825+ 完全相同。</li>
-                      <li><strong>出廠預載 4GB non-ECC 記憶體</strong>，主機售價比標準版更便宜約 NT$ 3,000 元。</li>
-                      <li>未來同樣支援最高升級至 32GB ECC 記憶體（升級時需將原廠 4GB 拔下替換）。</li>
+                    <ul className="list-disc list-inside text-slate-300 space-y-1 text-xs">
+                      <li><strong>出廠標配 8GB ECC DDR4 記憶體</strong>。</li>
+                      <li>AMD Ryzen V1500B 處理器、雙 2.5GbE 網路埠、雙 M.2 NVMe。</li>
+                      <li>具備 PCIe Gen3 x8 插槽，可視需要加購 10GbE 網卡。</li>
+                      <li>原廠 3 年保固，支援最新 DX525 擴充櫃。</li>
+                      <li>最新報價約 NT$ 47,150。</li>
+                    </ul>
+                  </div>
+
+                  {/* DS1825neo+ */}
+                  <div className="p-3.5 bg-slate-900 border border-slate-700 rounded-xl space-y-2">
+                    <div className="font-bold text-base text-slate-200 flex items-center justify-between">
+                      <span>DS1825neo+ (經濟版)</span>
+                      <span className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">親民入門</span>
+                    </div>
+                    <ul className="list-disc list-inside text-slate-300 space-y-1 text-xs">
+                      <li>硬體平台與 DS1825+ 完全相同。</li>
+                      <li><strong>出廠預載 4GB non-ECC 記憶體</strong>，售價最親民。</li>
+                      <li>原廠 3 年保固。</li>
+                      <li>最新報價約 NT$ 29,888。</li>
                     </ul>
                   </div>
                 </div>
@@ -141,10 +173,10 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
               <div className="p-4 sm:p-5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2">
                 <div className="font-bold text-sm text-slate-200 flex items-center gap-1.5">
                   <HardDrive className="w-4 h-4 text-sky-400" />
-                  DS1825+ 是否有限制 3.5 吋或 2.5 吋硬碟？
+                  DS1825+ / DS1823xs+ 是否有限制 3.5 吋或 2.5 吋硬碟？
                 </div>
                 <p className="text-slate-400 text-xs sm:text-sm">
-                  <strong>完全沒有限制，DS1825+ 原生通用支援 3.5 吋與 2.5 吋！</strong>
+                  <strong>完全沒有限制，原生通用支援 3.5 吋 SATA 硬碟、2.5 吋 SATA SSD 與 雙 M.2 NVMe SSD！</strong>
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
                   <div className="p-2.5 bg-slate-900 border border-slate-800 rounded-lg">
@@ -157,17 +189,9 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
                   </div>
                   <div className="p-2.5 bg-slate-900 border border-slate-800 rounded-lg">
                     <strong className="text-slate-200 block mb-0.5">3. 雙 M.2 2280 NVMe SSD</strong>
-                    <span className="text-slate-400">機身底部專屬免工具快拆槽，可用於讀寫快取或建立全快閃儲存池。</span>
+                    <span className="text-slate-400">機身底部專屬免工具快拆槽，可用於讀寫快取或建立獨立系統儲存集區。</span>
                   </div>
                 </div>
-              </div>
-
-              <div className="p-4 sm:p-5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2">
-                <div className="font-bold text-sm text-slate-200">為什麼不優先選擇 4-Bay (DS923+) 或 5-Bay (DS1522+)？</div>
-                <p className="text-slate-400 text-xs sm:text-sm">
-                  建置 50TB 有效容量若採用 4-Bay NAS (RAID 5)，必須購買 4 顆 18TB 或 20TB 硬碟，<strong>4 個槽位將直接全部插滿</strong>。未來一旦空間不足，無法透過「加裝硬碟」無痛擴充，必須承擔高成本整批更換大容量硬碟。
-                  而 <strong>8-Bay 機型先插 4 顆即達成 54TB (RAID 5)，還保留 4 個空槽</strong>，未來只需隨插隨加即可在線擴充容量！
-                </p>
               </div>
             </div>
           )}
@@ -216,7 +240,7 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
                 </div>
               </div>
 
-              {/* Mixed Drive Guide: Mixing Different Models & SHR Advantage */}
+              {/* Mixed Drive Guide */}
               <div className="p-4 sm:p-5 bg-purple-950/40 border border-purple-800/60 rounded-xl space-y-3">
                 <div className="font-bold text-base text-purple-300 flex items-center gap-2">
                   <Server className="w-5 h-5 text-purple-400 flex-shrink-0" />
@@ -245,10 +269,60 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
             </div>
           )}
 
-          {/* TAB 3: RAM & TB Transfer Analysis */}
+          {/* TAB 3: M.2 NVMe System Volume vs Bay HDDs */}
+          {activeTab === 'm2' && (
+            <div className="space-y-4">
+              <div className="p-4 sm:p-5 bg-purple-950/40 border border-purple-800/60 rounded-xl space-y-3">
+                <div className="font-bold text-base text-purple-300 flex items-center gap-2">
+                  <Layers className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                  M.2 NVMe 高速系統儲存集區 (System Volume) vs 3.5 吋 Bay 機械硬碟
+                </div>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  許多同事常問：「NAS 已經插了 4 顆 18TB 機械硬碟，為什麼還建議再加購 M.2 NVMe SSD？這兩者有什麼差別？」
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1 text-slate-200">
+                  <div className="p-3.5 bg-slate-900/80 border border-purple-900/40 rounded-xl space-y-2">
+                    <div className="font-bold text-purple-300 text-sm flex items-center gap-1.5">
+                      <HardDrive className="w-4 h-4 text-sky-400" />
+                      3.5 吋 Bay 機械硬碟：大容量資料池 (Bulk Data Pool)
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      • <strong>用途</strong>：存放 50TB+ 專案檔案、大檔備份、相片影片等冷熱資料。<br/>
+                      • <strong>特性</strong>：容量巨大（單顆 14~24TB）、每 TB 建置成本極低。<br/>
+                      • <strong>缺點</strong>：隨機讀寫 IOPS 較低（約 150 IOPS），執行頻繁資料庫檢索時會有機械尋道雜音。
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 bg-slate-900/80 border border-purple-900/40 rounded-xl space-y-2">
+                    <div className="font-bold text-purple-300 text-sm flex items-center gap-1.5">
+                      <Layers className="w-4 h-4 text-purple-400" />
+                      M.2 NVMe SSD：獨立高速系統集區 (System Pool)
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      • <strong>用途</strong>：建立獨立高速 Volume 1，專門安裝 <strong>DSM 系統套件、Docker (Container Manager)、VM 虛擬機、資料庫與 Photos AI 縮圖庫</strong>。<br/>
+                      • <strong>特性</strong>：零機械噪音、超高隨機讀寫 (高達 500,000 IOPS)。<br/>
+                      • <strong>關鍵優勢</strong>：<strong>完全不佔用正面 8 個 3.5 吋 Bay 槽位</strong>！
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl space-y-2">
+                  <div className="font-bold text-emerald-400 flex items-center gap-1.5 text-sm">
+                    <CheckCircle2 className="w-4 h-4" />
+                    為什麼建議使用 2 顆 M.2 SSD 組 RAID 1 鏡像系統碟？
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    加裝 2 顆 M.2 NVMe SSD (如 2 顆 Kingston KC3000 1TB 或 Synology 原廠 SNV3410) 建立 <strong>RAID 1 鏡像</strong>，不僅能享有百萬級 IOPS 高速反應，還具備單碟容錯防護。即使其中 1 顆固態硬碟損壞，系統與所有 Docker 服務依然不停機正常運作！
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: RAM & TB Transfer Analysis */}
           {activeTab === 'ram' && (
             <div className="space-y-4">
-              {/* Dedicated TB-level Transfer analysis */}
               <div className="p-4 sm:p-5 bg-sky-950/40 border border-sky-800/60 rounded-xl space-y-3">
                 <div className="font-bold text-base text-sky-300 flex items-center gap-2">
                   <Cpu className="w-5 h-5 text-sky-400 flex-shrink-0" />
@@ -304,40 +378,38 @@ export const HardwareGuideModal: React.FC<HardwareGuideModalProps> = ({
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   當 NAS 管理 50TB 以上巨量資料時，記憶體中每秒處理數萬筆讀寫。一般的 non-ECC 記憶體若遭受宇宙射線或電氣雜訊引起單元翻轉（Bit Flip），錯誤的資料將會被<strong>直接寫入硬碟儲存</strong>，導致檔案無聲損壞（Silent Data Corruption）。<strong>ECC 記憶體能在硬體層級即時偵測並修正單元錯誤</strong>，保護重要備份與企業資料庫安全。
                 </p>
-                <div className="text-xs text-slate-400 pt-1">
-                  • <strong>DS1825+ 標配 8GB ECC</strong>，天生具備錯誤修正優勢。<br/>
-                  • <strong>加購建議</strong>：若日後需加裝，可挑選原廠 16GB ECC (D4ECSO-3200-16G) 或高 CP 值的創見/金士頓 DDR4-3200 ECC SODIMM (約 NT$ 2,600)。
-                </div>
               </div>
             </div>
           )}
 
-          {/* TAB 4: Addons & Networking */}
+          {/* TAB 5: 10GbE & Networking */}
           {activeTab === 'addons' && (
             <div className="space-y-4">
-              <div className="p-4 sm:p-5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
-                <div className="font-bold text-base text-purple-400 flex items-center gap-2">
-                  <Zap className="w-5 h-5" />
-                  10GbE 高速網路擴充卡與 M.2 NVMe SSD 快取
+              <div className="p-4 sm:p-5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-3">
+                <div className="font-bold text-base text-sky-400 flex items-center gap-2">
+                  <Network className="w-5 h-5" />
+                  10GbE 網路速度提升與機種選購建議
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
-                  <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1.5">
-                    <div className="font-bold text-slate-100 flex items-center justify-between text-sm">
-                      <span>10GbE 網路擴充卡 (E10G18-T1)</span>
-                      <span className="text-xs text-sky-400 font-mono">PCIe 3.0 x4 RJ-45</span>
+                  <div className="p-3.5 bg-slate-900 border border-emerald-800/70 rounded-xl space-y-2">
+                    <div className="font-bold text-emerald-300 flex items-center justify-between text-sm">
+                      <span>方案 1：選用 DS1823xs+ (原生標配 10GbE)</span>
+                      <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-semibold">
+                        最省事首選
+                      </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-400">
-                      DS1825+ 原生標配雙 2.5GbE 網路埠（傳輸約 280 MB/s）。若團隊有大量 TB 級大檔頻繁讀寫或多人並行存取，加裝 10GbE 網卡可將傳輸頻寬提升至 <strong>1000+ MB/s</strong>，大幅縮短傳輸等待時間。
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      DS1823xs+ <strong>出廠即內建 1 x 10GbE RJ-45 高速埠</strong>，完全無需額外加購任何網卡，直接插上 10G Switch 或電腦 10G 網卡即可享有 <strong>1,000+ MB/s</strong> 極速傳輸，且享原廠 5 年頂級保固。
                     </p>
                   </div>
 
-                  <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1.5">
+                  <div className="p-3.5 bg-slate-900 border border-slate-700 rounded-xl space-y-2">
                     <div className="font-bold text-slate-100 flex items-center justify-between text-sm">
-                      <span>M.2 NVMe SSD (SNV3410 800G)</span>
-                      <span className="text-xs text-purple-400 font-mono">企業級高耐寫度 M.2</span>
+                      <span>方案 2：DS1825+ 透過 PCIe 加裝 E10G18-T1</span>
+                      <span className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">彈性擴充</span>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-400">
-                      DS1825+ 內建雙 M.2 2280 插槽，不僅可做為<strong>讀寫快取 (Read/Write Cache)</strong> 加速資料庫與小檔案隨機讀寫 IOPS，更支援直接建立 <strong>全快閃 M.2 儲存集區 (Storage Pool)</strong> 供虛擬機或 Docker 高速運行。
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      DS1825+ 原生標配雙 2.5GbE（傳輸約 280 MB/s）。若後續需要 10G 傳輸，可隨時購買 Synology E10G18-T1 擴充卡 (約 NT$ 4,499) 插入 PCIe Gen3 x8 插槽升級。
                     </p>
                   </div>
                 </div>

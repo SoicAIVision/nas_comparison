@@ -1,7 +1,7 @@
 import React from 'react';
 import { CompletePlanEvaluation, RaidType } from '../types';
 import { NAS_MODELS } from '../data/nasModels';
-import { HARD_DRIVES, RAM_MODULES, ADDON_ACCESSORIES } from '../data/accessories';
+import { HARD_DRIVES, RAM_MODULES, M2_SSD_MODULES, ADDON_ACCESSORIES } from '../data/accessories';
 import { useComparisonStore } from '../store/useComparisonStore';
 import { getDualStorePricingInfo } from '../utils/priceFormatter';
 import {
@@ -21,11 +21,13 @@ import {
   Minus,
   Sparkles,
   Store,
+  Layers,
+  Network,
 } from 'lucide-react';
 
 interface PlanCardProps {
   evaluation: CompletePlanEvaluation;
-  onOpenHardwareGuide: (tab: 'nas' | 'hdd' | 'ram' | 'addons') => void;
+  onOpenHardwareGuide: (tab: 'nas' | 'hdd' | 'ram' | 'm2' | 'addons') => void;
   onOpenPriceOverride: (itemId: string, itemName: string, currentPrice: number) => void;
 }
 
@@ -39,6 +41,10 @@ export const PlanCard: React.FC<PlanCardProps> = ({
     config,
     nasModel,
     mixedDriveItems,
+    m2SsdModule,
+    m2SsdCount,
+    m2Usage,
+    hasBuiltIn10G,
     storage,
     cost,
     usedBays,
@@ -115,6 +121,32 @@ export const PlanCard: React.FC<PlanCardProps> = ({
     updatePlan(config.id, { selectedRamId: val === 'none' ? undefined : val });
   };
 
+  // M.2 SSD Handlers
+  const handleM2ModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    if (val === 'none') {
+      updatePlan(config.id, { selectedM2SsdId: undefined, m2SsdCount: 0 });
+    } else {
+      updatePlan(config.id, {
+        selectedM2SsdId: val,
+        m2SsdCount: config.m2SsdCount && config.m2SsdCount > 0 ? config.m2SsdCount : 1,
+      });
+    }
+  };
+
+  const handleM2CountChange = (count: number) => {
+    if (count === 0) {
+      updatePlan(config.id, { selectedM2SsdId: undefined, m2SsdCount: 0 });
+    } else {
+      const defaultM2 = config.selectedM2SsdId || M2_SSD_MODULES[2].id; // default Kingston 1TB
+      updatePlan(config.id, { selectedM2SsdId: defaultM2, m2SsdCount: count });
+    }
+  };
+
+  const handleM2UsageChange = (usage: 'storage_pool' | 'cache') => {
+    updatePlan(config.id, { m2Usage: usage });
+  };
+
   const handleToggleAddon = (addonId: string) => {
     const exists = config.selectedAddonIds.includes(addonId);
     const updated = exists
@@ -122,6 +154,8 @@ export const PlanCard: React.FC<PlanCardProps> = ({
       : [...config.selectedAddonIds, addonId];
     updatePlan(config.id, { selectedAddonIds: updated });
   };
+
+  const m2PriceInfo = m2SsdModule ? getDualStorePricingInfo(m2SsdModule.pricing) : null;
 
   return (
     <div className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl transition-all flex flex-col justify-between relative overflow-hidden">
@@ -136,10 +170,22 @@ export const PlanCard: React.FC<PlanCardProps> = ({
               className="w-full bg-transparent font-bold text-lg text-slate-100 border-b border-transparent hover:border-slate-700 focus:border-sky-500 focus:outline-none px-1 py-0.5 rounded transition truncate"
               title="點擊可直接修改方案名稱"
             />
-            <div className="flex items-center gap-2 mt-1 px-1">
+            <div className="flex flex-wrap items-center gap-2 mt-1 px-1">
               <span className="text-xs font-semibold text-sky-400 bg-sky-950/70 border border-sky-800/70 px-2.5 py-0.5 rounded-md flex-shrink-0">
                 {nasModel.name}
               </span>
+              {hasBuiltIn10G && (
+                <span className="text-xs font-semibold text-emerald-400 bg-emerald-950/70 border border-emerald-800/70 px-2 py-0.5 rounded-md flex items-center gap-1">
+                  <Network className="w-3 h-3 text-emerald-400" />
+                  原生 10GbE 網卡
+                </span>
+              )}
+              {m2SsdCount > 0 && m2SsdModule && (
+                <span className="text-xs font-semibold text-purple-400 bg-purple-950/70 border border-purple-800/70 px-2 py-0.5 rounded-md flex items-center gap-1">
+                  <Layers className="w-3 h-3 text-purple-400" />
+                  {m2SsdCount}x {m2SsdModule.capacityGb}GB M.2 {m2Usage === 'storage_pool' ? '系統集區' : '快取'}
+                </span>
+              )}
               <span className="text-sm text-slate-400 truncate">
                 {mixedDriveItems.length === 1
                   ? `${usedBays} 顆 × ${mixedDriveItems[0]?.hddModel.capacityTb}TB (${config.raidType})`
@@ -169,7 +215,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           </div>
         </div>
 
-        {/* Compatibility Warnings */}
+        {/* Compatibility Warnings & Intelligent Prompts */}
         {compatibilityWarnings.length > 0 && (
           <div className="mb-4 p-3.5 bg-amber-950/50 border border-amber-800/60 rounded-xl text-sm text-amber-300 space-y-1">
             {compatibilityWarnings.map((warn, i) => (
@@ -242,9 +288,10 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             >
               {NAS_MODELS.map((model) => {
                 const info = getDualStorePricingInfo(model.pricing);
+                const tag10g = model.hasBuiltIn10G ? ' [⚡內建10GbE]' : '';
                 return (
                   <option key={model.id} value={model.id}>
-                    {model.name} ({model.bays} Bay / {model.defaultRamGb}GB {model.defaultRamType}) [{info.dropdownText}] - 最低 NT$ {info.bestPrice.toLocaleString()}
+                    {model.name} ({model.bays} Bay / {model.defaultRamGb}GB {model.defaultRamType}){tag10g} [{info.dropdownText}] - 最低 NT$ {info.bestPrice.toLocaleString()}
                   </option>
                 );
               })}
@@ -269,7 +316,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             <div className="flex items-center justify-between text-sm font-semibold text-slate-300 mb-1.5">
               <span className="flex items-center gap-1.5">
                 <HddIcon className="w-4 h-4 text-sky-400" />
-                硬碟選購與槽位配置
+                3.5吋 硬碟選購與槽位配置 (資料儲存集區)
                 <button
                   type="button"
                   onClick={() => onOpenHardwareGuide('hdd')}
@@ -285,7 +332,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
               </span>
             </div>
 
-            {/* Dynamic Drive List (Unified presentation) */}
+            {/* Dynamic Drive List */}
             <div className="space-y-3 bg-slate-950/70 p-3.5 border border-slate-800 rounded-xl">
               {mixedDriveItems.map((item, idx) => {
                 const driveInfo = getDualStorePricingInfo(item.hddModel.pricing);
@@ -375,7 +422,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             </div>
           </div>
 
-          {/* 3. RAID Mode Selector with Hover Tooltip for SHR-1 */}
+          {/* 3. RAID Mode Selector */}
           <div>
             <div className="flex items-center justify-between text-sm font-semibold text-slate-300 mb-1.5">
               <span className="flex items-center gap-1.5">
@@ -459,25 +506,140 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             </select>
           </div>
 
-          {/* 5. Optional Add-ons */}
+          {/* 5. M.2 NVMe SSD Expansion Section (NEW) */}
+          <div>
+            <div className="flex items-center justify-between text-sm font-semibold text-slate-300 mb-1.5">
+              <span className="flex items-center gap-1.5">
+                <Layers className="w-4 h-4 text-purple-400" />
+                M.2 NVMe 高速系統硬碟 / 快取選購
+                <button
+                  type="button"
+                  onClick={() => onOpenHardwareGuide('m2')}
+                  className="text-slate-400 hover:text-purple-300 cursor-pointer"
+                  title="查看 M.2 系統碟 (Volume) vs 3.5 吋 Bay 硬碟之優勢說明"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                </button>
+              </span>
+              <span className="text-xs text-purple-400 font-medium">
+                機身專屬 M.2 槽位 (不佔用 8 Bay)
+              </span>
+            </div>
+
+            <div className="bg-slate-950/70 p-3.5 border border-slate-800 rounded-xl space-y-2.5">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <select
+                  value={m2SsdCount > 0 ? config.selectedM2SsdId || M2_SSD_MODULES[2].id : 'none'}
+                  onChange={handleM2ModelChange}
+                  className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-purple-500 transition cursor-pointer truncate"
+                >
+                  <option value="none">不加購 M.2 SSD (僅使用 3.5 吋硬碟)</option>
+                  {M2_SSD_MODULES.map((m2) => {
+                    const info = getDualStorePricingInfo(m2.pricing);
+                    return (
+                      <option key={m2.id} value={m2.id}>
+                        {m2.brand} {m2.capacityGb}GB ({m2.readSpeedMb}MB/s) [{info.dropdownText}] - NT$ {info.bestPrice.toLocaleString()}
+                      </option>
+                    );
+                  })}
+                </select>
+
+                {/* M.2 Quantity Buttons */}
+                <div className="flex items-center justify-center bg-slate-800 border border-slate-700 rounded-lg overflow-hidden flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => handleM2CountChange(Math.max(0, m2SsdCount - 1))}
+                    disabled={m2SsdCount <= 0}
+                    className="px-2.5 py-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
+                    title="減少 M.2 顆數"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="px-2 font-mono font-bold text-xs text-slate-100 min-w-[48px] text-center">
+                    {m2SsdCount === 0 ? '無' : `${m2SsdCount} 顆`}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleM2CountChange(Math.min(2, m2SsdCount + 1))}
+                    disabled={m2SsdCount >= nasModel.m2Slots}
+                    className="px-2.5 py-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition cursor-pointer"
+                    title="增加 M.2 顆數 (最高 2 顆)"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* M.2 Usage Purpose Selector (if count > 0) */}
+              {m2SsdCount > 0 && (
+                <div className="pt-1 border-t border-slate-800/80 space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-400">用途模式：</span>
+                    <div className="flex gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleM2UsageChange('storage_pool')}
+                        className={`px-2 py-1 rounded text-xs font-medium transition cursor-pointer ${
+                          m2Usage === 'storage_pool'
+                            ? 'bg-purple-600 text-white shadow'
+                            : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                        }`}
+                        title="建立獨立高速系統儲存集區，供 Docker、VM、套件與 Photos 高速運算"
+                      >
+                        🚀 系統儲存集區 (推薦)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleM2UsageChange('cache')}
+                        className={`px-2 py-1 rounded text-xs font-medium transition cursor-pointer ${
+                          m2Usage === 'cache'
+                            ? 'bg-purple-600 text-white shadow'
+                            : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                        }`}
+                        title="作為大容量 HDD 陣列的隨機讀寫快取"
+                      >
+                        ⚡ 讀寫快取 (Cache)
+                      </button>
+                    </div>
+                  </div>
+
+                  {m2PriceInfo && (
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-0.5">
+                      <span className="flex items-center gap-1.5">
+                        <Store className="w-3 h-3 text-purple-400" />
+                        原: <strong className="text-slate-200">{m2PriceInfo.coolpcText}</strong> | 欣: <strong className="text-slate-200">{m2PriceInfo.sinyaText}</strong>
+                      </span>
+                      <span className="font-mono text-purple-300 font-semibold">
+                        小計: NT$ {(m2PriceInfo.bestPrice * m2SsdCount).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 6. Optional Add-ons */}
           <div>
             <div className="flex items-center justify-between text-sm font-semibold text-slate-300 mb-1.5">
               <span className="flex items-center gap-1.5">
                 <Zap className="w-4 h-4 text-sky-400" />
-                擴充配件 (網卡 / 快取)
+                擴充配件 (網卡 / 擴充櫃)
               </span>
               <button
                 type="button"
                 onClick={() => onOpenHardwareGuide('addons')}
                 className="text-xs text-sky-400 hover:text-sky-300 underline font-normal cursor-pointer"
               >
-                10G 與快取用途？
+                10G 與擴充用途？
               </button>
             </div>
             <div className="space-y-2">
               {ADDON_ACCESSORIES.map((addon) => {
                 const isSelected = config.selectedAddonIds.includes(addon.id);
                 const info = getDualStorePricingInfo(addon.pricing);
+                const isNic10g = addon.type === 'nic_10g' && addon.id === 'synology-e10g18-t1';
+
                 return (
                   <label
                     key={addon.id}
@@ -495,7 +657,14 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                         className="rounded border-slate-700 text-sky-500 focus:ring-0 cursor-pointer"
                       />
                       <div>
-                        <div className="font-medium text-slate-200 truncate text-xs">{addon.name}</div>
+                        <div className="font-medium text-slate-200 truncate text-xs flex items-center gap-1.5">
+                          {addon.name}
+                          {isNic10g && hasBuiltIn10G && (
+                            <span className="text-[10px] font-bold text-amber-400 bg-amber-950/80 border border-amber-800 px-1.5 py-0.2 rounded">
+                              本機已內建10G (免加購)
+                            </span>
+                          )}
+                        </div>
                         <div className="text-[11px] text-slate-400">
                           原: {info.coolpcPrice ? `NT$ ${info.coolpcPrice.toLocaleString()}` : '無'} | 欣: {info.sinyaPrice ? `NT$ ${info.sinyaPrice.toLocaleString()}` : '無'}
                         </div>

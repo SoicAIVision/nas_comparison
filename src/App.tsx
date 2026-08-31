@@ -15,7 +15,7 @@ export const App: React.FC = () => {
 
   const [guideModalConfig, setGuideModalConfig] = useState<{
     isOpen: boolean;
-    tab: 'nas' | 'hdd' | 'ram' | 'addons';
+    tab: 'nas' | 'hdd' | 'ram' | 'm2' | 'addons';
   }>({
     isOpen: false,
     tab: 'nas',
@@ -47,7 +47,7 @@ export const App: React.FC = () => {
 
   const evaluations = getEvaluatedPlans();
 
-  const handleOpenGuide = (tab: 'nas' | 'hdd' | 'ram' | 'addons' = 'nas') => {
+  const handleOpenGuide = (tab: 'nas' | 'hdd' | 'ram' | 'm2' | 'addons' = 'nas') => {
     setGuideModalConfig({ isOpen: true, tab });
   };
 

@@ -32,11 +32,12 @@ export interface NasModel {
   ramSlots: number; // e.g. 2
   m2Slots: number; // e.g. 2 (NVMe M.2 2280)
   m2PoolSupport: boolean; // true if supports storage pool creation
-  ethernetPorts: string; // e.g. "2 x 2.5GbE RJ-45"
+  ethernetPorts: string; // e.g. "2 x 2.5GbE RJ-45" or "1 x 10GbE + 2 x 1GbE"
+  hasBuiltIn10G?: boolean; // true if already has native 10GbE network port
   pcieSlots: string; // e.g. "1 x Gen3 x8 slot (x4 link)"
   usbPorts: string; // e.g. "3 x USB 3.2 Gen 1"
   hardwareTranscoding: boolean;
-  warrantyYears: number; // e.g. 3
+  warrantyYears: number; // e.g. 3 or 5
   description: string;
   msrp: number; // TWD
   pricing: ComponentPricing;
@@ -61,6 +62,18 @@ export interface RamModule {
   brand: 'Synology' | 'Crucial' | 'Kingston' | 'Transcend';
   capacityGb: number; // e.g. 8, 16
   type: 'DDR4-3200 ECC SODIMM' | 'DDR4-3200 non-ECC SODIMM';
+  isOfficial: boolean;
+  pricing: ComponentPricing;
+}
+
+export interface M2SsdModule {
+  id: string;
+  brand: 'Synology' | 'Kingston' | 'Micron' | 'Western Digital' | 'Samsung';
+  name: string; // e.g. "Synology SNV3410 400GB"
+  capacityGb: number; // e.g. 400, 800, 1000, 2000
+  formFactor: 'M.2 2280 NVMe PCIe';
+  readSpeedMb: number;
+  writeSpeedMb: number;
   isOfficial: boolean;
   pricing: ComponentPricing;
 }
@@ -101,6 +114,9 @@ export interface PlanConfiguration {
   hddCount: number; // single drive count
   raidType: RaidType;
   selectedRamId?: string;
+  selectedM2SsdId?: string;
+  m2SsdCount?: number; // 0, 1, 2
+  m2Usage?: 'storage_pool' | 'cache';
   selectedAddonIds: string[];
   customNotes?: string;
 }
@@ -123,6 +139,14 @@ export interface PlanCostBreakdown {
     items?: { name: string; count: number; unitPrice: number; subtotal: number }[];
   };
   ramCost: { coolpc?: number; sinya?: number; best: number; source: string };
+  m2SsdCost: {
+    coolpc?: number;
+    sinya?: number;
+    best: number;
+    unitPrice: number;
+    count: number;
+    source: string;
+  };
   addonsCost: { coolpc?: number; sinya?: number; best: number; source: string };
   totalCoolpc?: number;
   totalSinya?: number;
@@ -138,6 +162,10 @@ export interface CompletePlanEvaluation {
   isMixedDrives: boolean;
   mixedDriveItems: EvaluatedDriveItem[];
   ramModule?: RamModule;
+  m2SsdModule?: M2SsdModule;
+  m2SsdCount: number;
+  m2Usage: 'storage_pool' | 'cache';
+  hasBuiltIn10G: boolean;
   addons: AddonAccessory[];
   storage: StorageCalculationResult;
   cost: PlanCostBreakdown;
@@ -155,3 +183,4 @@ export interface ScrapedPriceDatabase {
   sinyaTimestamp: string;
   items: Record<string, ComponentPricing>;
 }
+

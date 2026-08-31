@@ -1,4 +1,4 @@
-import { NasModel, HardDrive, RamModule, AddonAccessory, PlanCostBreakdown } from '../types';
+import { NasModel, HardDrive, RamModule, M2SsdModule, AddonAccessory, PlanCostBreakdown } from '../types';
 
 export interface DriveItemParam {
   hddModel: HardDrive;
@@ -11,16 +11,28 @@ export interface CalculatePlanCostParams {
   hddCount?: number;
   mixedDrives?: DriveItemParam[];
   ramModule?: RamModule;
+  m2SsdModule?: M2SsdModule;
+  m2SsdCount?: number;
   addons: AddonAccessory[];
   usableTb: number;
 }
 
 /**
- * Calculates itemized costs and store comparisons (CoolPC, Sinyaw, Best Mixed)
- * Supporting both single HDD model and mixed HDD models.
+ * Calculates itemized costs and store comparisons (CoolPC, Sinya, Best Mixed)
+ * Supporting single HDD model, mixed HDD models, and M.2 SSD modules.
  */
 export function calculatePlanCost(params: CalculatePlanCostParams): PlanCostBreakdown {
-  const { nasModel, hddModel, hddCount = 0, mixedDrives, ramModule, addons, usableTb } = params;
+  const {
+    nasModel,
+    hddModel,
+    hddCount = 0,
+    mixedDrives,
+    ramModule,
+    m2SsdModule,
+    m2SsdCount = 0,
+    addons,
+    usableTb,
+  } = params;
 
   // 1. NAS Mainframe cost
   const nasCoolpc = nasModel.pricing.coolpc?.inStock ? nasModel.pricing.coolpc.price : undefined;
@@ -93,7 +105,28 @@ export function calculatePlanCost(params: CalculatePlanCostParams): PlanCostBrea
     ramSource = ramModule.pricing.bestSource || (ramBest === ramCoolpc ? 'coolpc' : 'sinya');
   }
 
-  // 4. Addons costs
+  // 4. M.2 SSD cost
+  let m2CoolpcTotal: number | undefined = 0;
+  let m2SinyaTotal: number | undefined = 0;
+  let m2BestTotal = 0;
+  let m2UnitPrice = 0;
+  let m2Source = 'none';
+
+  if (m2SsdModule && m2SsdCount > 0) {
+    const unitCoolpc = m2SsdModule.pricing.coolpc?.inStock ? m2SsdModule.pricing.coolpc.price : undefined;
+    const unitSinya = m2SsdModule.pricing.sinya?.inStock ? m2SsdModule.pricing.sinya.price : undefined;
+    m2UnitPrice = m2SsdModule.pricing.bestPrice || Math.min(...[unitCoolpc, unitSinya].filter((p): p is number => p !== undefined));
+    m2BestTotal = m2UnitPrice * m2SsdCount;
+
+    m2CoolpcTotal = unitCoolpc !== undefined ? unitCoolpc * m2SsdCount : undefined;
+    m2SinyaTotal = unitSinya !== undefined ? unitSinya * m2SsdCount : undefined;
+    m2Source = m2SsdModule.pricing.bestSource || (m2UnitPrice === unitCoolpc ? 'coolpc' : 'sinya');
+  } else {
+    m2CoolpcTotal = 0;
+    m2SinyaTotal = 0;
+  }
+
+  // 5. Addons costs
   let addonsCoolpcTotal = 0;
   let addonsSinyaTotal = 0;
   let addonsBestTotal = 0;
@@ -108,18 +141,18 @@ export function calculatePlanCost(params: CalculatePlanCostParams): PlanCostBrea
     addonsBestTotal += ab;
   }
 
-  // 5. Grand totals
+  // 6. Grand totals
   const totalCoolpc =
-    nasCoolpc !== undefined && hddCoolpcTotal !== undefined
-      ? nasCoolpc + hddCoolpcTotal + (ramCoolpc ?? (ramModule ? 0 : 0)) + addonsCoolpcTotal
+    nasCoolpc !== undefined && hddCoolpcTotal !== undefined && m2CoolpcTotal !== undefined
+      ? nasCoolpc + hddCoolpcTotal + (ramCoolpc ?? 0) + m2CoolpcTotal + addonsCoolpcTotal
       : undefined;
 
   const totalSinya =
-    nasSinya !== undefined && hddSinyaTotal !== undefined
-      ? nasSinya + hddSinyaTotal + (ramSinya ?? (ramModule ? 0 : 0)) + addonsSinyaTotal
+    nasSinya !== undefined && hddSinyaTotal !== undefined && m2SinyaTotal !== undefined
+      ? nasSinya + hddSinyaTotal + (ramSinya ?? 0) + m2SinyaTotal + addonsSinyaTotal
       : undefined;
 
-  const totalBest = nasBest + hddBestTotal + ramBest + addonsBestTotal;
+  const totalBest = nasBest + hddBestTotal + ramBest + m2BestTotal + addonsBestTotal;
 
   // Cost per usable TB / TiB
   const costPerUsableTb = usableTb > 0 ? Math.round(totalBest / usableTb) : 0;
@@ -138,6 +171,14 @@ export function calculatePlanCost(params: CalculatePlanCostParams): PlanCostBrea
       items: itemizedBreakdown,
     },
     ramCost: { coolpc: ramCoolpc, sinya: ramSinya, best: ramBest, source: ramSource },
+    m2SsdCost: {
+      coolpc: m2CoolpcTotal,
+      sinya: m2SinyaTotal,
+      best: m2BestTotal,
+      unitPrice: m2UnitPrice,
+      count: m2SsdCount,
+      source: m2Source,
+    },
     addonsCost: { coolpc: addonsCoolpcTotal, sinya: addonsSinyaTotal, best: addonsBestTotal, source: 'mixed' },
     totalCoolpc,
     totalSinya,
